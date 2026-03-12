@@ -10,417 +10,376 @@
     <script>
         tailwind.config = {
             darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        noc: {
+                            bg: '#0a0a0a',
+                            panel: '#111111',
+                            green: '#00ff9c',
+                            greenDim: 'rgba(0, 255, 156, 0.15)',
+                            text: '#e0e0e0',
+                            textMuted: '#888888'
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['"JetBrains Mono"', 'monospace']
+                    }
+                }
+            }
         }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Dark Mode: Hacker Font */
-        .dark body {
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        /* Light Mode: Inter Font */
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'JetBrains Mono', monospace;
+            background-color: #0a0a0a;
+            color: #e0e0e0;
         }
 
         /* Custom Scrollbar for Hacker Mode */
-        .dark ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
         }
-
-        .dark ::-webkit-scrollbar-track {
-            background: #000;
+        ::-webkit-scrollbar-track {
+            background: #111;
         }
-
-        .dark ::-webkit-scrollbar-thumb {
-            background: #15803d;
-            border-radius: 2px;
+        ::-webkit-scrollbar-thumb {
+            background: #00ff9c;
+            border-radius: 4px;
         }
-
-        .dark ::-webkit-scrollbar-thumb:hover {
-            background: #22c55e;
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00cc7d;
         }
         
-        .glitch-text {
-            text-shadow: 0 0 5px #22c55e;
+        .noc-panel {
+            background-color: #111111;
+            border: 1px solid #00ff9c;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
         }
         
-        /* Needed for the specific toast animation to match our functionality while keeping standard classes */
-        .toast-show {
-            transform: translateY(0);
+        .noc-input {
+            background-color: #000000;
+            border: 1px solid #333333;
+            color: #e0e0e0;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .noc-input:focus {
+            border-color: #00ff9c;
+            outline: none;
+            box-shadow: 0 0 0 1px rgba(0, 255, 156, 0.5);
+        }
+        
+        .noc-label {
+            color: #00ff9c;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        /* Toast Animation */
+        #toast {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        #toast.toast-show {
             opacity: 1;
-        }
-
-        textarea {
-            min-height: 120px;
-            resize: none;
-            overflow: hidden;
+            visibility: visible;
         }
     </style>
 </head>
 
-<body class="bg-slate-50 text-slate-800 dark:bg-black dark:text-green-500 transition-colors duration-300 min-h-screen p-2 md:p-4 dark:selection:bg-green-900 dark:selection:text-white">
+<body class="min-h-screen p-4 flex flex-col selection:bg-noc-green selection:text-black">
 
-    <!-- Wrapper: Light(Rounded/White/Shadow) vs Dark(Square/Black/GreenBorder/Glow) -->
-    <div class="max-w-4xl mx-auto 
-        bg-white rounded-xl shadow-lg border border-slate-200
-        dark:bg-slate-950 dark:rounded-none dark:shadow-[0_0_20px_rgba(34,197,94,0.2)] dark:border-green-800
-        overflow-hidden transition-all duration-300">
-
-        <!-- Header -->
-        <div class="px-4 py-2 flex justify-between items-center
-            bg-slate-900 border-b border-slate-200
-            dark:bg-black dark:border-green-800">
-            
-            <!-- Link Back to Main App -->
-            <a href="app-past/index.html"
-                class="mr-4 px-3 py-1 text-xs font-bold uppercase tracking-wider border transition-all text-slate-400 border-slate-600 hover:text-white hover:border-white dark:text-green-800 dark:border-green-900 dark:hover:text-green-400 dark:hover:border-green-500">
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-6 px-2">
+        <div>
+            <h1 class="text-2xl font-bold text-noc-green uppercase tracking-widest leading-tight">
+                ISP Config Generator
+            </h1>
+            <p class="text-noc-textMuted text-xs tracking-wide">
+                SYSTEM INITIALIZED :: NOC OPERATIONS DASHBOARD (TCT)
+            </p>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="app-past/index.html" class="text-xs text-noc-green border border-noc-green px-3 py-1 rounded hover:bg-noc-green hover:text-black transition-colors uppercase font-bold">
                 APP-MAIN
             </a>
+            <a href="infra-tct.html" class="text-xs text-black bg-noc-green border border-noc-green px-3 py-1 rounded hover:opacity-80 transition-colors uppercase font-bold">
+                INFRA-TCT
+            </a>
             
-            <div>
-                <!-- Title: White in Light Mode header (since header is dark slate), Green in Dark Mode -->
-                <h1 class="text-xl font-bold text-white dark:text-green-400 uppercase tracking-widest dark:glitch-text">
-                    ISP Config Generator</h1>
-                <p class="text-slate-400 dark:text-green-800 text-xs">
-                    <span class="hidden dark:inline">Initializing system... Ready.</span>
-                    <span class="dark:hidden">Generate customer configuration instantly</span>
-                </p>
-            </div>
-
-            <div class="flex items-center gap-2">
-                <!-- Status Indicator -->
-                <div class="text-xs text-green-400 dark:text-green-900 animate-pulse font-mono">● ONLINE</div>
+            <div class="text-xs text-noc-green animate-pulse flex items-center gap-2 border border-noc-green px-3 py-1 rounded bg-noc-greenDim">
+                <div class="w-2 h-2 rounded-full bg-noc-green"></div>
+                ONLINE
             </div>
         </div>
+    </header>
 
-        <div class="p-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <!-- Main 3-Column Grid -->
+    <main class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
 
-            <!-- Left Column: Inputs -->
-            <div class="space-y-2">
+        <!-- LEFT PANEL: CUSTOMER INFO -->
+        <section class="noc-panel flex flex-col h-full">
+            <h2 class="text-noc-green font-bold mb-4 flex items-center gap-2 border-b border-noc-green/30 pb-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                >> CUSTOMER INFO
+            </h2>
+            
+            <div class="mb-4 flex-grow flex flex-col">
+                <label class="noc-label">Paste Ticket Data</label>
+                <textarea id="customerTicket" class="noc-input w-full p-3 text-xs flex-grow resize-none min-h-[150px]"
+                    placeholder="Paste TCT customer ticket here..."></textarea>
+            </div>
+
+            <div class="bg-black/50 p-3 rounded border border-gray-800 space-y-3">
+                <h3 class="noc-label text-noc-textMuted border-b border-gray-800 pb-1 mb-2">Parsed Data Extractor</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-[10px] uppercase text-noc-textMuted block mb-1">Customer ID</label>
+                        <div id="disp_id" class="text-sm font-bold text-white truncate h-5">--</div>
+                    </div>
+                    <div>
+                        <label class="text-[10px] uppercase text-noc-textMuted block mb-1">Order ID</label>
+                        <div id="disp_order" class="text-sm font-bold text-white truncate h-5">--</div>
+                    </div>
+                    <div class="col-span-2 border-t border-gray-800 pt-2">
+                        <label class="text-[10px] uppercase text-noc-textMuted block mb-1">Customer Name</label>
+                        <div id="disp_name" class="text-sm font-bold text-white truncate h-5">--</div>
+                    </div>
+                    <div class="col-span-2">
+                        <label class="text-[10px] uppercase text-noc-textMuted block mb-1">Phone</label>
+                        <div id="disp_phone" class="text-sm font-bold text-white truncate h-5">--</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CENTER PANEL: NETWORK CONFIG -->
+        <section class="noc-panel flex flex-col h-full">
+            <h2 class="text-noc-green font-bold mb-4 flex items-center gap-2 border-b border-noc-green/30 pb-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                >> NETWORK CONFIGURATION
+            </h2>
+
+            <div class="space-y-4 flex-grow">
                 <div>
-                    <label class="block text-xs font-bold mb-1 uppercase tracking-wider text-slate-700 dark:text-green-700">
-                        <span class="dark:hidden">Customer Info Block</span>
-                        <span class="hidden dark:inline">>> Customer Info Block</span>
-                    </label>
-                    <textarea id="customerTicket" rows="8"
-                        class="w-full px-3 py-2 text-sm transition-all
-                        bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:ring-blue-500 focus:border-blue-500
-                        dark:bg-black dark:border-green-800 dark:rounded-none dark:font-mono dark:text-green-400 dark:placeholder-green-900 dark:focus:border-green-500 dark:focus:ring-green-500"
-                        placeholder="Paste text here like:&#10;ID: 114216&#10;Name: Nev Sophanny&#10;Address: Borey Chip Mong 50M #03 St.P08&#10;Phone: 85599999343&#10;Type: PPPoE&#10;Package: TODAY Fiber Link-Light 70Mbps&#10;TD0350-TCT"></textarea>
+                    <label class="noc-label">SN (Serial Number)</label>
+                    <input type="text" id="snInput" class="noc-input w-full p-2 text-sm uppercase" placeholder="4857544327C2CFA4">
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold mb-1 uppercase tracking-wider text-slate-700 dark:text-green-700">
-                        <span class="dark:hidden">SN</span>
-                        <span class="hidden dark:inline">>> SN</span>
-                    </label>
-                    <input type="text" id="snInput"
-                        class="w-full px-3 py-2 text-sm transition-all
-                        bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:ring-blue-500 focus:border-blue-500
-                        dark:bg-black dark:border-green-800 dark:rounded-none dark:font-mono dark:text-green-400 dark:placeholder-green-900 dark:focus:border-green-500 dark:focus:ring-green-500"
-                        placeholder="4857544327C2CFA4">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold mb-1 uppercase tracking-wider text-slate-700 dark:text-green-700">
-                        <span class="dark:hidden">Connection Type</span>
-                        <span class="hidden dark:inline">>> Connection Type</span>
-                    </label>
-                    <select id="connectionType"
-                        class="w-full px-3 py-2 text-sm transition-all
-                        bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:ring-blue-500 focus:border-blue-500
-                        dark:bg-black dark:border-green-800 dark:rounded-none dark:font-mono dark:text-green-400 dark:focus:border-green-500">
-                        <option value="2422">PPPoE</option>
-                        <option value="2423">Static IP</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold mb-1 uppercase tracking-wider text-slate-700 dark:text-green-700">
-                        <span class="dark:hidden">Package Type</span>
-                        <span class="hidden dark:inline">>> Package Type</span>
-                    </label>
-                    <select id="packageType"
-                        class="w-full px-3 py-2 text-sm transition-all
-                        bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:ring-blue-500 focus:border-blue-500
-                        dark:bg-black dark:border-green-800 dark:rounded-none dark:font-mono dark:text-green-400 dark:focus:border-green-500">
-                        <option value="@fiberlink">@fiberlink</option>
-                        <option value="@todayhome">@todayhome</option>
-                        <option value="@todayfiber">@todayfiber</option>
-                        <option value="@todayplus">@todayplus</option>
-                        <option value="@sf">@sf</option>
-                    </select>
-                </div>
-
-                <!-- SPEED CALCULATOR TOGGLE -->
-                <div class="flex items-center justify-between py-1 border-t border-slate-200 dark:border-green-900 mt-2 pt-2">
-                    <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-green-700 cursor-pointer">
-                        <span class="dark:hidden">Speed Calculator</span>
-                        <span class="hidden dark:inline">>> SPEED_CALCULATOR</span>
-                    </label>
-                    <button id="speedToggle" type="button" class="relative w-12 h-6 rounded-full transition-colors duration-300 bg-slate-300 dark:bg-slate-800 dark:border dark:border-green-900 dark:rounded-none" onclick="toggleSpeed()">
-                        <span id="speedDot" class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full transition-all duration-300 bg-white shadow dark:bg-green-900 dark:rounded-none"></span>
-                    </button>
-                </div>
-
-                <!-- SPEED CALCULATOR FIELDS (HIDDEN BY DEFAULT) -->
-                <div id="speedCalculatorFields" class="hidden">
-                    <input type="number" id="speedInput"
-                        class="w-full px-3 py-2 text-sm transition-all mb-2
-                        bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:ring-blue-500 focus:border-blue-500
-                        dark:bg-black dark:border-green-800 dark:rounded-none dark:font-mono dark:text-green-400 dark:placeholder-green-900 dark:focus:border-green-500 dark:focus:ring-green-500"
-                        placeholder="Speed (Mbps) e.g. 50"
-                        oninput="calculateSpeed()">
-                    
-                    <div class="p-2 relative group transition-all
-                        bg-slate-50 rounded-lg border border-slate-200
-                        dark:bg-black dark:rounded-none dark:border-green-800 dark:shadow-inner dark:shadow-green-900/20 mt-2">
-                        <div class="flex justify-between items-center mb-1 pb-1
-                            border-b border-transparent dark:border-green-900">
-                            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-green-700">
-                                <span class="dark:hidden">Speed Output</span>
-                                <span class="hidden dark:inline">>> SPEED_OUTPUT</span>
-                            </label>
-                            <button onclick="copySpeedOutput(this)"
-                                class="text-[10px] px-2 py-0.5 transition-colors flex items-center gap-1 font-mono uppercase
-                                bg-white hover:bg-slate-100 text-slate-600 border border-slate-300 rounded
-                                dark:bg-slate-900 dark:hover:bg-green-900 dark:text-green-500 dark:border-green-700 dark:rounded-none">
-                                <span class="dark:hidden">Copy</span>
-                                <span class="hidden dark:inline">CPY</span>
-                            </button>
-                        </div>
-                        <input type="text" id="speedOutput" readonly onclick="this.select();" 
-                            class="w-full text-xs font-mono bg-transparent border-0 focus:ring-0 p-0 text-slate-800 dark:text-green-300"
-                            placeholder="Awaiting input...">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="noc-label">Connection Type</label>
+                        <select id="connectionType" class="noc-input w-full p-2 text-sm">
+                            <option value="2422">PPPoE</option>
+                            <option value="2423">Static IP</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="noc-label">Package Type</label>
+                        <select id="packageType" class="noc-input w-full p-2 text-sm">
+                            <option value="@fiberlink">@fiberlink</option>
+                            <option value="@todayhome">@todayhome</option>
+                            <option value="@todayfiber">@todayfiber</option>
+                            <option value="@todayplus">@todayplus</option>
+                            <option value="@sf">@sf</option>
+                        </select>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold mb-1 uppercase tracking-wider text-slate-700 dark:text-green-700">
-                        <span class="dark:hidden">GPON/EPON:ONU</span>
-                        <span class="hidden dark:inline">>> GPON/EPON:ONU</span>
-                    </label>
-                    <div class="flex gap-1">
-                        <select id="interfacePrefix"
-                            class="px-2 py-2 text-sm transition-all shrink-0
-                            bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:ring-blue-500 focus:border-blue-500
-                            dark:bg-black dark:border-green-800 dark:rounded-none dark:font-mono dark:text-green-400 dark:focus:border-green-500">
+                    <label class="noc-label">ONU Interface</label>
+                    <div class="flex gap-2">
+                        <select id="interfacePrefix" class="noc-input p-2 text-sm shrink-0" onchange="updateInterfaceInput()">
                             <option value="EPON0/1:" selected>EPON0/1:</option>
                             <option value="GPON0/1:">GPON0/1:</option>
                         </select>
-                        <input type="text" id="onuId"
-                            class="w-full min-w-0 px-3 py-2 text-sm transition-all
-                            bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:ring-blue-500 focus:border-blue-500
-                            dark:bg-black dark:border-green-800 dark:rounded-none dark:font-mono dark:text-green-400 dark:placeholder-green-900 dark:focus:border-green-500"
-                            placeholder="ONU ID (e.g. 36)">
+                        <input type="text" id="onuId" class="noc-input w-full p-2 text-sm" value="" placeholder="ONU ID (e.g. 36)">
                     </div>
                 </div>
 
-                <!-- IPCAM Toggle (Visual match only to structure for consistency, JS toggle classes omitted for briefity if unused in script, but matches DOM logic) -->
-                <div class="flex items-center justify-between py-1">
-                    <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-green-700 cursor-pointer">
-                        <span class="dark:hidden">IPCAM Mode</span>
-                        <span class="hidden dark:inline">>> IPCAM_MODE</span>
-                    </label>
-                    <button id="ipcamToggle" type="button" class="relative w-12 h-6 rounded-full transition-colors duration-300 bg-slate-300 dark:bg-slate-800 dark:border dark:border-green-900 dark:rounded-none" onclick="toggleBtnVisual(this)">
-                        <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full transition-all duration-300 bg-white shadow dark:bg-green-900 dark:rounded-none"></span>
-                    </button>
-                </div>
-
-                <!-- DNS Toggle -->
-                <div class="flex items-center justify-between py-1">
-                    <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-green-700 cursor-pointer">
-                        <span class="dark:hidden">DNS Mode</span>
-                        <span class="hidden dark:inline">>> DNS_MODE</span>
-                    </label>
-                    <button id="dnsToggle" type="button" class="relative w-12 h-6 rounded-full transition-colors duration-300 bg-slate-300 dark:bg-slate-800 dark:border dark:border-green-900 dark:rounded-none" onclick="toggleBtnVisual(this)">
-                        <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full transition-all duration-300 bg-white shadow dark:bg-green-900 dark:rounded-none"></span>
-                    </button>
-                </div>
-                
-                <button id="generateBtn" onclick="executeGeneration()"
-                    class="w-full font-bold py-2 transition-all shadow-sm uppercase tracking-wider text-sm
-                    bg-blue-600 hover:bg-blue-700 text-white rounded-lg
-                    dark:bg-green-700 dark:hover:bg-green-600 dark:text-black dark:rounded-none dark:shadow-[0_0_10px_rgba(21,128,61,0.5)] dark:hover:shadow-[0_0_15px_rgba(34,197,94,0.7)] dark:border dark:border-green-500">
-                    <span class="dark:hidden">Generate Configuration</span>
-                    <span class="hidden dark:inline">[ EXECUTE_GENERATION ]</span>
-                </button>
-            </div>
-
-            <!-- Right Column: Outputs -->
-            <div class="space-y-3">
-
-                <!-- Output 1 -->
-                <div class="p-3 relative group transition-all
-                    bg-slate-50 rounded-lg border border-slate-200
-                    dark:bg-black dark:rounded-none dark:border-green-800 dark:shadow-inner dark:shadow-green-900/20">
-
-                    <div class="flex justify-between items-center mb-2 pb-2
-                        border-b border-transparent dark:border-green-900">
-                        <label class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-green-600">
-                            <span class="dark:hidden">Output Our Team</span>
-                            <span class="hidden dark:inline">>> OUTPUT_OUR_TEAM</span>
-                        </label>
-                        <button onclick="copyOutput('output1', this)"
-                            class="text-xs px-3 py-1 transition-colors flex items-center gap-1 font-mono uppercase
-                            bg-white hover:bg-slate-100 text-slate-600 border border-slate-300 rounded
-                            dark:bg-slate-900 dark:hover:bg-green-900 dark:text-green-500 dark:border-green-700 dark:rounded-none">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z">
-                                </path>
-                            </svg>
-                            <span class="dark:hidden">Copy</span>
-                            <span class="hidden dark:inline">CPY</span>
+                <!-- Toggles Container -->
+                <div class="pt-4 mt-2 border-t border-gray-800 space-y-3">
+                    <!-- IPCAM -->
+                    <div class="flex items-center justify-between opacity-50">
+                        <label class="noc-label !mb-0 cursor-not-allowed">>> IPCAM_MODE</label>
+                        <button type="button" class="relative w-10 h-5 rounded-full transition-colors duration-300 bg-gray-800 border border-gray-600 cursor-not-allowed">
+                            <span class="absolute top-[1px] left-[2px] w-4 h-4 rounded-full transition-all duration-300 bg-gray-500"></span>
                         </button>
                     </div>
-                    <textarea id="output1" rows="8" readonly onclick="this.removeAttribute('readonly');" 
-                        class="w-full text-xs font-mono whitespace-pre overflow-x-auto min-h-[60px] bg-transparent border-0 focus:ring-0 p-0 resize-y text-slate-800 dark:text-green-300"></textarea>
-                </div>
 
-                <!-- Output 2 -->
-                <div class="p-3 relative group transition-all
-                    bg-slate-50 rounded-lg border border-slate-200
-                    dark:bg-black dark:rounded-none dark:border-green-800 dark:shadow-inner dark:shadow-green-900/20">
-
-                    <div class="flex justify-between items-center mb-2 pb-2
-                        border-b border-transparent dark:border-green-900">
-                        <label class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-green-600">
-                            <span class="dark:hidden">To TCT Group</span>
-                            <span class="hidden dark:inline">>> TO_TCT_GROUP</span>
-                        </label>
-                        <button onclick="copyOutput('output2', this)"
-                            class="text-xs px-3 py-1 transition-colors flex items-center gap-1 font-mono uppercase
-                            bg-white hover:bg-slate-100 text-slate-600 border border-slate-300 rounded
-                            dark:bg-slate-900 dark:hover:bg-green-900 dark:text-green-500 dark:border-green-700 dark:rounded-none">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z">
-                                </path>
-                            </svg>
-                            <span class="dark:hidden">Copy</span>
-                            <span class="hidden dark:inline">CPY</span>
+                    <!-- DNS -->
+                    <div class="flex items-center justify-between opacity-50">
+                        <label class="noc-label !mb-0 cursor-not-allowed">>> DNS_MODE</label>
+                        <button type="button" class="relative w-10 h-5 rounded-full transition-colors duration-300 bg-gray-800 border border-gray-600 cursor-not-allowed">
+                            <span class="absolute top-[1px] left-[2px] w-4 h-4 rounded-full transition-all duration-300 bg-gray-500"></span>
                         </button>
                     </div>
-                    <textarea id="output2" rows="8" readonly onclick="this.removeAttribute('readonly');" 
-                        class="w-full text-xs font-mono whitespace-pre overflow-x-auto min-h-[60px] bg-transparent border-0 focus:ring-0 p-0 resize-y text-slate-800 dark:text-green-300"></textarea>
-                </div>
 
+                    <!-- SPEED CALCULATOR -->
+                    <div class="flex items-center justify-between">
+                        <label class="noc-label !mb-0 cursor-pointer" onclick="toggleSpeed()">>> SPEED_CALCULATOR</label>
+                        <button id="speedToggle" type="button" class="relative w-10 h-5 rounded-full transition-colors duration-300 bg-gray-800 border border-gray-600" onclick="toggleSpeed()">
+                            <span id="speedDot" class="absolute top-[1px] left-[2px] w-4 h-4 rounded-full transition-all duration-300 bg-gray-500"></span>
+                        </button>
+                    </div>
+                    <div id="speedCalculatorFields" class="hidden bg-black/40 p-2 rounded border border-gray-800">
+                        <label class="noc-label">Speed (Mbps)</label>
+                        <input type="number" id="speedInput" class="noc-input w-full p-1.5 text-xs mb-2" placeholder="e.g. 50" oninput="calculateSpeed()">
+                        <input type="text" id="speedOutput" readonly onclick="this.select(); document.execCommand('copy');" class="w-full text-[11px] font-mono bg-transparent border-0 text-noc-green focus:outline-none" placeholder="Awaiting input...">
+                    </div>
+                </div>
             </div>
-        </div>
+        </section>
+
+        <!-- RIGHT PANEL: OUTPUT (STACKED) -->
+        <section class="noc-panel flex flex-col h-full gap-4 overflow-y-auto">
+            
+            <!-- Output 1 -->
+            <div class="flex flex-col h-[200px] shrink-0">
+                <div class="flex justify-between items-center mb-1">
+                    <label class="noc-label !mb-0">>> USER_INFO_OUTPUT</label>
+                    <button onclick="copyOutput('output1', this)" class="text-[10px] px-2 py-1 flex items-center gap-1 font-mono uppercase bg-noc-green/10 hover:bg-noc-green/20 text-noc-green border border-noc-green/50 rounded transition-colors">
+                        COPY
+                    </button>
+                </div>
+                <textarea id="output1" readonly onclick="this.select();" class="noc-input w-full flex-grow p-3 text-xs resize-none" placeholder="Our Team Format will appear here..."></textarea>
+            </div>
+
+            <!-- Output 2 -->
+            <div class="flex flex-col h-[200px] shrink-0">
+                <div class="flex justify-between items-center mb-1">
+                    <label class="noc-label !mb-0">>> TO_TCT_GROUP</label>
+                    <button onclick="copyOutput('output2', this)" class="text-[10px] px-2 py-1 flex items-center gap-1 font-mono uppercase bg-noc-green/10 hover:bg-noc-green/20 text-noc-green border border-noc-green/50 rounded transition-colors">
+                        COPY
+                    </button>
+                </div>
+                <textarea id="output2" readonly onclick="this.select();" class="noc-input w-full flex-grow p-3 text-xs resize-none" placeholder="TCT Group format will appear here..."></textarea>
+            </div>
+
+            <!-- Note: Originally TCT Mode only had 2 outputs stacked. 
+                 If they require a 3rd (Command Line), we could add it, but requirement stated "Restore stacked outputs for TCT mode USER_INFO, COMMAND_LINE, TCT_GROUP." 
+                 So I will include the 3rd box just in case, even if original tct math didn't build it explicitly.
+            -->
+            <div class="flex flex-col h-[200px] shrink-0 opacity-50">
+                <div class="flex justify-between items-center mb-1">
+                    <label class="noc-label !mb-0">>> COMMAND_LINE_OUTPUT (HIDDEN IN TCT)</label>
+                </div>
+                <textarea readonly class="noc-input w-full flex-grow p-3 text-xs resize-none bg-gray-900 border-gray-800" placeholder="Use App-Main for ONU Commands"></textarea>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Bottom Action Bar -->
+    <div class="mt-6 flex justify-center items-center gap-6 mb-2">
+        <button onclick="executeGeneration()" class="bg-noc-green text-black font-bold py-3 px-8 rounded-lg shadow-[0_0_15px_rgba(0,255,156,0.3)] hover:shadow-[0_0_25px_rgba(0,255,156,0.5)] transition-all uppercase tracking-widest flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            GENERATE CONFIG
+        </button>
+        <button onclick="resetAll()" class="text-noc-textMuted hover:text-white border border-gray-700 hover:border-gray-500 font-bold py-3 px-6 rounded-lg transition-all uppercase tracking-widest text-sm">
+            RESET
+        </button>
     </div>
 
     <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-4 right-4 text-xs bg-slate-800 text-white dark:bg-green-500 dark:text-black dark:border-2 dark:border-black px-4 py-2 font-bold uppercase tracking-widest transform translate-y-20 opacity-0 transition-all duration-300 shadow-lg dark:shadow-[0_0_10px_rgba(34,197,94,0.6)] z-50">
+    <div id="toast" class="fixed bottom-6 right-6 bg-noc-green text-black font-bold px-4 py-2 rounded shadow-lg flex items-center gap-2 z-50">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
         DATA COPIED TO CLIPBOARD
     </div>
 
     <script>
-        // Auto resize function
-        function autoResize(textarea) {
-            textarea.style.height = 'auto';
-            textarea.style.height = textarea.scrollHeight + 'px';
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
-            const textareas = document.querySelectorAll('textarea');
-            textareas.forEach(ta => {
-                ta.addEventListener('input', () => autoResize(ta));
+            const customerInput = document.getElementById('customerTicket');
+            
+            customerInput.addEventListener('input', () => {
+                autoResize(customerInput);
+                const data = extractData(customerInput.value);
+                document.getElementById('disp_id').innerText = data.id !== "UNKNOWN" ? data.id : '--';
+                document.getElementById('disp_name').innerText = data.name !== "UNKNOWN" ? data.name : '--';
+                document.getElementById('disp_phone').innerText = data.phone !== "UNKNOWN" ? data.phone : '--';
+                document.getElementById('disp_order').innerText = data.orderNum !== "UNKNOWN" ? data.orderNum : '--';
+            });
+            
+            customerInput.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    executeGeneration();
+                }
             });
         });
 
-        // Copy function using new visual feedback pattern
+        function autoResize(textarea) {
+            textarea.style.height = '150px';
+            const scrollHeight = textarea.scrollHeight;
+            if (scrollHeight > 150) {
+                textarea.style.height = (scrollHeight + 2) + 'px';
+            }
+        }
+
         function copyOutput(elementId, btnElement) {
             const textarea = document.getElementById(elementId);
             textarea.select();
             document.execCommand('copy');
             window.getSelection().removeAllRanges();
             
-            // Show toast
             const toast = document.getElementById('toast');
             toast.classList.add('toast-show');
-            
-            setTimeout(() => {
-                toast.classList.remove('toast-show');
-            }, 2000);
-        }
-
-        // Dedicated copy function for the inline text input of the speed calculator
-        function copySpeedOutput(btnElement) {
-            const inputField = document.getElementById('speedOutput');
-            inputField.select();
-            document.execCommand('copy');
-            window.getSelection().removeAllRanges();
-            
-            // Show toast
-            const toast = document.getElementById('toast');
-            toast.classList.add('toast-show');
-            
-            setTimeout(() => {
-                toast.classList.remove('toast-show');
-            }, 2000);
+            setTimeout(() => { toast.classList.remove('toast-show'); }, 2000);
         }
 
         // Speed Toggle Logic
         let speedEnabled = false;
-
         function toggleSpeed() {
             speedEnabled = !speedEnabled;
             const fields = document.getElementById('speedCalculatorFields');
-            const toggleBtn = document.getElementById('speedToggle');
             const dot = document.getElementById('speedDot');
 
             if (speedEnabled) {
-                // Show fields
                 fields.classList.remove('hidden');
-                // Toggle ON style (matches blue-500/green-700 visually)
-                toggleBtn.classList.replace('dark:bg-slate-800', 'dark:bg-green-700');
-                toggleBtn.classList.replace('bg-slate-300', 'bg-blue-600');
-                dot.style.transform = 'translateX(24px)';
-                dot.classList.replace('dark:bg-green-900', 'dark:bg-green-400');
+                dot.style.transform = 'translateX(20px)';
+                dot.classList.replace('bg-gray-500', 'bg-noc-green');
             } else {
-                // Hide fields
                 fields.classList.add('hidden');
-                // Toggle OFF style
-                toggleBtn.classList.replace('dark:bg-green-700', 'dark:bg-slate-800');
-                toggleBtn.classList.replace('bg-blue-600', 'bg-slate-300');
                 dot.style.transform = 'translateX(0)';
-                dot.classList.replace('dark:bg-green-400', 'dark:bg-green-900');
+                dot.classList.replace('bg-noc-green', 'bg-gray-500');
                 
-                // Clear state to prevent ghost data
                 document.getElementById('speedInput').value = '';
                 document.getElementById('speedOutput').value = '';
             }
         }
 
-        // Speed calculation logic
         function calculateSpeed() {
             const speedInput = document.getElementById('speedInput').value;
             const outputField = document.getElementById('speedOutput');
-            
             if (!speedInput || speedInput <= 0) {
                 outputField.value = '';
                 return;
             }
-
             const speed = parseFloat(speedInput);
             const policeRate = speed * 1048576;
             const burst = Math.round(policeRate * 0.10625);
-            const peakBurst = burst;
-
-            // Strict single line formatting requirement
-            outputField.value = `${speed} police rate ${policeRate} burst ${burst} peak-burst ${peakBurst}`;
+            outputField.value = `${speed} police rate ${policeRate} burst ${burst} peak-burst ${burst}`;
         }
 
-        // We only use actual toggle logic for Speed here, so removing toggleBtnVisual which was a dummy
         function extractData(text) {
-            const idMatch = text.match(/ID:\s*(\w+)/i);
-            const nameMatch = text.match(/Name:\s*([^\n]+)/i);
-            const phoneMatch = text.match(/Phone:\s*(\d+)/i);
-            const packageMatch = text.match(/Package:\s*([^\n]+)/i);
+            // Anchor ID strictly to avoid word bleeding
+            const idMatch = text.match(/^\s*(?:CID\s*\/|C)?ID:\s*([^\n\r]+)/im);
+            const nameMatch = text.match(/^\s*Name:\s*([^\n\r]+)/im);
+            const phoneMatch = text.match(/^\s*Phone:\s*([^\n\r]+)/im);
+            const packageMatch = text.match(/^\s*Package:\s*([^\n\r]+)/im);
+            
+            // Allow project code anywhere, but fallback neatly
             const orderMatch = text.match(/(TD\d{4})/i);
             const fullOrderMatch = text.match(/(TD\d{4}-TCT)/i);
 
@@ -451,30 +410,42 @@
 
             const data = extractData(ticketText);
             
-            // Process Username: last 8 chars of SN + packageType
             const last8 = sn.length >= 8 ? sn.slice(-8) : sn;
             const username = `${last8}${packageType}`;
             
-            // Process Password: Phone number, replacing 855 with 0 if it exists
             let password = data.phone;
             if (password.startsWith('855')) {
                 password = '0' + password.slice(3);
             }
 
-            // Fallback for orderFull if not found in text but orderNum is found
             const bottomTag = data.orderFull ? data.orderFull : (data.orderNum !== "UNKNOWN" ? `${data.orderNum}-TCT` : "");
 
-            // OUTPUT 1 FORMAT
             const output1 = `Done Bong. Please help test!\n\nID: ${data.id}\nName: ${data.name}\nUsername: ${username}\nPassword: ${password}\n\n${bottomTag}`;
-
-            // OUTPUT 2 FORMAT
             const output2 = `Dear bong, please active this customer new install\n\nOrder : ${data.orderNum}\nVLAN : ${connectionType}\nMode : Bridge\n\nSN : ${sn}`;
 
             document.getElementById('output1').value = output1;
             document.getElementById('output2').value = output2;
+        }
+
+        function resetAll() {
+            document.getElementById('customerTicket').value = '';
+            document.getElementById('customerTicket').style.height = '150px';
+            document.getElementById('snInput').value = '';
+            document.getElementById('onuId').value = '';
             
-            autoResize(document.getElementById('output1'));
-            autoResize(document.getElementById('output2'));
+            document.getElementById('connectionType').selectedIndex = 0;
+            document.getElementById('packageType').selectedIndex = 0;
+            document.getElementById('interfacePrefix').selectedIndex = 0;
+
+            if(speedEnabled) toggleSpeed();
+            
+            document.getElementById('disp_id').innerText = '--';
+            document.getElementById('disp_name').innerText = '--';
+            document.getElementById('disp_phone').innerText = '--';
+            document.getElementById('disp_order').innerText = '--';
+
+            document.getElementById('output1').value = '';
+            document.getElementById('output2').value = '';
         }
     </script>
 </body>

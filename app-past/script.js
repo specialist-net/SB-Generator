@@ -53,7 +53,7 @@ function parseCustomerData(text) {
     if (!text) return result;
 
     // ID
-    const idMatch = text.match(/(?:CID\s*\/|C)?ID\s*[:.]?\s*([^\n\r]+)/i);
+    const idMatch = text.match(/^\s*(?:CID\s*\/|C)?ID\s*[:.]?\s*([^\n\r]+)/im);
     if (idMatch) {
         let idVal = idMatch[1].trim();
         const doubleIdMatch = idVal.match(/^ID\s*[:.]?\s*(.+)/i);
@@ -127,25 +127,7 @@ function parseCustomerData(text) {
     return result;
 }
 
-// Tab Switching Logic
-let currentActiveTab = 'userInfo';
 
-function switchTab(tabId) {
-    currentActiveTab = tabId;
-    const tabs = ['userInfo', 'commandOut', 'tctGroup'];
-    
-    tabs.forEach(t => {
-        const btn = document.getElementById(`tab_${t}`);
-        const area = document.getElementById(`output_${t}`);
-        if(t === tabId) {
-            btn.classList.add('active');
-            area.classList.remove('hidden');
-        } else {
-            btn.classList.remove('active');
-            area.classList.add('hidden');
-        }
-    });
-}
 
 // Configuration Generator Engine
 function generateConfig() {
@@ -294,8 +276,8 @@ function resetAll() {
 }
 
 // Global Copy Engine
-function copyCurrentOutput() {
-    const area = document.getElementById(`output_${currentActiveTab}`);
+function copyOutput(elementId, btnElement) {
+    const area = document.getElementById(elementId);
     area.select();
     document.execCommand('copy');
     window.getSelection().removeAllRanges();
