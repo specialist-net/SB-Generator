@@ -24,6 +24,8 @@
             --border-color: #00ff9c;
             --text-color: #00ff9c;
             --text-muted: #888888;
+            --text-secondary: #888888;
+            --label-color: #00ff9c;
             --input-bg: #000000;
             --input-border: #333333;
             --output-bg: #000000;
@@ -48,28 +50,30 @@
         :root.light-theme {
             --bg-color: #eef2f6;
             --panel-bg: #ffffff;
-            --border-color: #d0d7de;
-            --text-color: #1f2328;
-            --text-muted: #57606a;
-            --input-bg: #f6f8fa;
-            --input-border: #d0d7de;
-            --output-bg: #f6f8fa;
-            --copy-bg: #00a86b;
+            --border-color: #c6ccd2;
+            --text-color: #111827;
+            --text-muted: #6b7280;
+            --text-secondary: #374151;
+            --label-color: #6b7280;
+            --input-bg: #ffffff;
+            --input-border: #c6ccd2;
+            --output-bg: #f8fafc;
+            --copy-bg: #059669;
             --copy-text: #ffffff;
-            --copy-border: #00a86b;
+            --copy-border: #059669;
             --copy-radius: 6px;
-            --copy-hover-bg: #00925c;
+            --copy-hover-bg: #047857;
             --copy-hover-text: #ffffff;
-            --copy-hover-border: #00925c;
-            --panel-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            --copy-hover-border: #047857;
+            --panel-shadow: 0 2px 8px rgba(0,0,0,0.06);
             --btn-hover-bg: #ffffff;
-            --btn-hover-text: #00a86b;
-            --accent-color: #00a86b;
-            --focus-ring: rgba(0,168,107,0.15);
-            --focus-border: #00a86b;
+            --btn-hover-text: #059669;
+            --accent-color: #059669;
+            --focus-ring: rgba(5,150,105,0.15);
+            --focus-border: #059669;
             --panel-radius: 10px;
             --toggle-off: #cbd5e1;
-            --toggle-on: #00a86b;
+            --toggle-on: #059669;
         }
 
         /* Core Application Logic */
@@ -134,7 +138,7 @@
         }
         
         .noc-label {
-            color: var(--border-color);
+            color: var(--label-color);
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -174,6 +178,7 @@
         }
 
         .text-var-muted { color: var(--text-muted); }
+        .text-var-secondary { color: var(--text-secondary); }
         .border-var-color { border-color: var(--border-color); }
         .bg-var-color { background-color: var(--border-color); }
 
@@ -210,7 +215,7 @@
             <h1 class="text-2xl font-bold uppercase tracking-widest leading-tight text-var-main">
                 ISP Config Generator
             </h1>
-            <p class="text-var-muted text-xs tracking-wide">
+            <p class="text-var-secondary text-xs tracking-wide">
                 SYSTEM INITIALIZED :: NOC OPERATIONS DASHBOARD (TCT)
             </p>
         </div>
