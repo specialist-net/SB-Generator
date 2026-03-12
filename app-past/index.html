@@ -380,22 +380,22 @@
             <div class="flex flex-col h-[200px] shrink-0">
                 <div class="flex justify-between items-center mb-1">
                     <label class="noc-label !mb-0">>> USER_INFO_OUTPUT</label>
-                    <button onclick="copyOutput('output_userInfo', this)" class="copy-btn text-[10px] px-3 py-1 flex items-center gap-1 font-mono uppercase font-bold">
+                    <button onclick="copyOutput('userInfoOutput', this)" class="copy-btn text-[10px] px-3 py-1 flex items-center gap-1 font-mono uppercase font-bold">
                         COPY
                     </button>
                 </div>
-                <textarea id="output_userInfo" readonly onclick="this.select();" class="noc-output-area w-full flex-grow p-3 text-xs resize-none" placeholder="User Information will appear here..."></textarea>
+                <textarea id="userInfoOutput" readonly onclick="this.select();" class="noc-output-area w-full flex-grow p-3 text-xs resize-none" placeholder="User Information will appear here..."></textarea>
             </div>
 
             <!-- Output 2 -->
             <div class="flex flex-col h-[200px] shrink-0">
                 <div class="flex justify-between items-center mb-1">
                     <label class="noc-label !mb-0">>> COMMAND_LINE_OUTPUT</label>
-                    <button onclick="copyOutput('output_commandOut', this)" class="copy-btn text-[10px] px-3 py-1 flex items-center gap-1 font-mono uppercase font-bold">
+                    <button onclick="copyOutput('commandOutput', this)" class="copy-btn text-[10px] px-3 py-1 flex items-center gap-1 font-mono uppercase font-bold">
                         COPY
                     </button>
                 </div>
-                <textarea id="output_commandOut" readonly onclick="this.select();" class="noc-output-area w-full flex-grow p-3 text-xs resize-none" placeholder="Command Lines will appear here..."></textarea>
+                <textarea id="commandOutput" readonly onclick="this.select();" class="noc-output-area w-full flex-grow p-3 text-xs resize-none" placeholder="Command Lines will appear here..."></textarea>
             </div>
             
         </section>
@@ -404,7 +404,7 @@
 
     <!-- Bottom Action Bar -->
     <div class="mt-6 flex justify-center items-center gap-6 mb-2">
-        <button onclick="generateConfig()" class="noc-btn filled border border-var-color font-bold py-3 px-8 rounded-lg shadow-[0_0_15px_rgba(0,0,0,0.1)] transition-all uppercase tracking-widest flex items-center gap-2">
+        <button id="generateBtn" onclick="generateConfig(event)" class="noc-btn filled border border-var-color font-bold py-3 px-8 rounded-lg shadow-[0_0_15px_rgba(0,0,0,0.1)] transition-all uppercase tracking-widest flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
             GENERATE CONFIG
         </button>
@@ -432,7 +432,7 @@
             }
         });
     </script>
-    <script src="script.js?v=4.0"></script>
+    <script src="script.js?v=4.1"></script>
 </body>
 
 </html>

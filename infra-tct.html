@@ -365,21 +365,21 @@
             <div class="flex flex-col h-[200px] shrink-0">
                 <div class="flex justify-between items-center mb-1">
                     <label class="noc-label !mb-0">>> USER_INFO_OUTPUT</label>
-                    <button onclick="copyOutput('output_userInfo', this)" class="copy-btn text-[10px] px-3 py-1 flex items-center gap-1 font-mono uppercase font-bold">
+                    <button onclick="copyOutput('userInfoOutput', this)" class="copy-btn text-[10px] px-3 py-1 flex items-center gap-1 font-mono uppercase font-bold">
                         COPY
                     </button>
                 </div>
-                <textarea id="output_userInfo" readonly onclick="this.select();" class="noc-output-area w-full flex-grow p-3 text-xs resize-none" placeholder="User Information will appear here..."></textarea>
+                <textarea id="userInfoOutput" readonly onclick="this.select();" class="noc-output-area w-full flex-grow p-3 text-xs resize-none" placeholder="User Information will appear here..."></textarea>
             </div>
 
             <div class="flex flex-col h-[200px] shrink-0">
                 <div class="flex justify-between items-center mb-1">
                     <label class="noc-label !mb-0">>> TO_TCT_GROUP</label>
-                    <button onclick="copyOutput('output_tctGroup', this)" class="copy-btn text-[10px] px-3 py-1 flex items-center gap-1 font-mono uppercase font-bold">
+                    <button onclick="copyOutput('tctGroupOutput', this)" class="copy-btn text-[10px] px-3 py-1 flex items-center gap-1 font-mono uppercase font-bold">
                         COPY
                     </button>
                 </div>
-                <textarea id="output_tctGroup" readonly onclick="this.select();" class="noc-output-area w-full flex-grow p-3 text-xs resize-none" placeholder="TCT Group format will appear here..."></textarea>
+                <textarea id="tctGroupOutput" readonly onclick="this.select();" class="noc-output-area w-full flex-grow p-3 text-xs resize-none" placeholder="TCT Group format will appear here..."></textarea>
             </div>
 
         </section>
@@ -388,7 +388,7 @@
 
     <!-- Bottom Action Bar -->
     <div class="mt-6 flex justify-center items-center gap-6 mb-2">
-        <button onclick="executeGeneration()" class="noc-btn filled border border-var-color font-bold py-3 px-8 rounded-lg shadow-[0_0_15px_rgba(0,0,0,0.1)] transition-all uppercase tracking-widest flex items-center gap-2">
+        <button id="generateBtn" onclick="executeGeneration(event)" class="noc-btn filled border border-var-color font-bold py-3 px-8 rounded-lg shadow-[0_0_15px_rgba(0,0,0,0.1)] transition-all uppercase tracking-widest flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
             GENERATE CONFIG
         </button>
@@ -428,9 +428,14 @@
             
             customerInput.addEventListener('keydown', (e) => {
                 if (e.ctrlKey && e.key === 'Enter') {
-                    executeGeneration();
+                    executeGeneration(e);
                 }
             });
+
+            const generateBtn = document.getElementById('generateBtn');
+            if (generateBtn) {
+                generateBtn.addEventListener('click', executeGeneration);
+            }
         });
 
         function autoResize(textarea) {
@@ -523,7 +528,10 @@
             };
         }
 
-        function executeGeneration() {
+        function executeGeneration(event) {
+            if (event) event.preventDefault();
+            console.log("Generate button clicked");
+
             const ticketText = document.getElementById('customerTicket').value;
             const sn = document.getElementById('snInput').value.trim();
             const connectionType = document.getElementById('connectionType').value;
@@ -553,8 +561,17 @@
             const output1 = `Done Bong. Please help test!\n\nID: ${data.id}\nName: ${data.name}\nUsername: ${username}\nPassword: ${password}\n\n${bottomTag}`;
             const output2 = `Dear bong, please active this customer new install\n\nOrder : ${data.orderNum}\nVLAN : ${connectionType}\nMode : Bridge\n\nSN : ${sn}`;
 
-            document.getElementById('output_userInfo').value = output1;
-            document.getElementById('output_tctGroup').value = output2;
+            const userInfoEl = document.getElementById('userInfoOutput') || document.getElementById('output_userInfo');
+            const tctGroupEl = document.getElementById('tctGroupOutput') || document.getElementById('output_tctGroup');
+
+            if (userInfoEl) {
+                userInfoEl.value = output1;
+                userInfoEl.innerText = output1;
+            }
+            if (tctGroupEl) {
+                tctGroupEl.value = output2;
+                tctGroupEl.innerText = output2;
+            }
         }
 
         function resetAll() {
@@ -574,8 +591,16 @@
             document.getElementById('disp_phone').innerText = '--';
             document.getElementById('disp_order').innerText = '--';
 
-            document.getElementById('output_userInfo').value = '';
-            document.getElementById('output_tctGroup').value = '';
+            const userInfoEl = document.getElementById('userInfoOutput') || document.getElementById('output_userInfo');
+            if (userInfoEl) {
+                userInfoEl.value = '';
+                userInfoEl.innerText = '';
+            }
+            const tctGroupEl = document.getElementById('tctGroupOutput') || document.getElementById('output_tctGroup');
+            if (tctGroupEl) {
+                tctGroupEl.value = '';
+                tctGroupEl.innerText = '';
+            }
         }
     </script>
 </body>

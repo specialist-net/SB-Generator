@@ -11,9 +11,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Generate on Ctrl+Enter
     customerInput.addEventListener('keydown', (e) => {
         if (e.ctrlKey && e.key === 'Enter') {
-            generateConfig();
+            generateConfig(e);
         }
     });
+
+    // Generate Button explicit event listener
+    const generateBtn = document.getElementById('generateBtn');
+    if (generateBtn) {
+        generateBtn.addEventListener('click', generateConfig);
+    }
 
     // Initialize display with empty
     updateParsedDisplay('');
@@ -130,17 +136,27 @@ function parseCustomerData(text) {
 
 
 // Configuration Generator Engine
-function generateConfig() {
+function generateConfig(event) {
+    if (event) event.preventDefault();
+    console.log("Generate button clicked");
+    
     const rawText = document.getElementById('customerInput').value;
     const data = parseCustomerData(rawText);
     
     const macRaw = document.getElementById('macInput').value;
-    const connectionType = document.getElementById('connectionType').value;
+    const connectionTypeEl = document.getElementById('connectionType');
+    const connectionType = connectionTypeEl ? connectionTypeEl.value : '';
     const packageType = document.getElementById('packageType').value;
     const interfaceStr = document.getElementById('interfaceInput').value;
     
     // Format MAC
-    const macStripped = macRaw.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    const macStripped = macRaw.replace(/[^a-fA-F0-9]/g, '').toUpperCase();
+    
+    if (macStripped.length !== 12) {
+        alert("Invalid MAC address format");
+        return;
+    }
+    
     const macClean = macStripped.slice(-8);
     
     // VLAN from Package Mode (For Command)
@@ -202,14 +218,14 @@ function generateConfig() {
         outUser += `Sub : 255.255.252.0\n`;
         outUser += `GW : ${gateway}\n`;
         outUser += `Port : ${portNum}\n\n`;
-        outUser += `IP view: 103.216.48.130\n\n`;
+        outUser += `IP view: 103.216.48.130`;
     } else {
         outUser += `Username: ${username}\n`;
-        outUser += `Password: ${data.phone}${dnsLine}\n\n`;
+        outUser += `Password: ${data.phone}${dnsLine}`;
     }
     
-    if(footerInfo) outUser += `${footerInfo}-TCT\n\n`;
-    outUser += `Thank you, Bong.`;
+    if(footerInfo) outUser += `\n\n${footerInfo}-TCT`;
+    outUser += `\n\nThank you, Bong.`;
 
     // ==========================================
     // 2. GENERATE COMMAND OUTPUT
@@ -234,8 +250,17 @@ function generateConfig() {
     }
 
     // Apply to UI
-    document.getElementById('output_userInfo').value = outUser;
-    document.getElementById('output_commandOut').value = outCmd;
+    const userInfoEl = document.getElementById('userInfoOutput') || document.getElementById('output_userInfo');
+    const commandEl = document.getElementById('commandOutput') || document.getElementById('output_commandOut');
+    
+    if (userInfoEl) {
+        userInfoEl.innerText = outUser;
+        userInfoEl.value = outUser;
+    }
+    if (commandEl) {
+        commandEl.innerText = outCmd;
+        commandEl.value = outCmd;
+    }
     copyInterface();
 }
 
@@ -261,9 +286,18 @@ function resetAll() {
     updateParsedDisplay('');
 
     // Outputs
-    document.getElementById('output_userInfo').value = '';
-    document.getElementById('output_commandOut').value = '';
-    document.getElementById('output_tctGroup').value = '';
+    const userInfoEl = document.getElementById('userInfoOutput') || document.getElementById('output_userInfo');
+    if (userInfoEl) {
+        userInfoEl.innerText = '';
+        userInfoEl.value = '';
+    }
+    const commandEl = document.getElementById('commandOutput') || document.getElementById('output_commandOut');
+    if (commandEl) {
+        commandEl.innerText = '';
+        commandEl.value = '';
+    }
+    const tctGroupEl = document.getElementById('output_tctGroup');
+    if (tctGroupEl) tctGroupEl.value = '';
 }
 
 // Global Copy Engine
