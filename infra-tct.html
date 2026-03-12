@@ -1,121 +1,132 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ISP CONFIG GENERATOR</title>
+    <title>ISP Config Generator</title>
+    <link rel="icon" href="app-past/favicon.jpg" type="image/jpeg">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
+        /* Dark Mode: Hacker Font */
+        .dark body {
             font-family: 'JetBrains Mono', monospace;
-            background-color: #000;
-            color: #22c55e;
-            margin: 0;
-            padding: 0;
         }
 
-        ::selection {
-            background-color: #14532d;
-            color: #fff;
+        /* Light Mode: Inter Font */
+        body {
+            font-family: 'Inter', sans-serif;
         }
 
         /* Custom Scrollbar for Hacker Mode */
-        ::-webkit-scrollbar {
+        .dark ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
         }
-        ::-webkit-scrollbar-track {
+
+        .dark ::-webkit-scrollbar-track {
             background: #000;
         }
-        ::-webkit-scrollbar-thumb {
+
+        .dark ::-webkit-scrollbar-thumb {
             background: #15803d;
-            border-radius: 0px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #22c55e;
+            border-radius: 2px;
         }
 
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #22c55e;
+        }
+        
         .glitch-text {
             text-shadow: 0 0 5px #22c55e;
         }
-
-        .input-field {
-            background-color: #000;
-            border: 1px solid #166534;
-            color: #4ade80;
-            outline: none;
-            transition: all 0.2s;
-        }
-        .input-field:focus {
-            border-color: #22c55e;
-            box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
-        }
-        .input-field::placeholder {
-            color: #064e3b;
-        }
         
-        .toggle-bg {
-            background-color: #064e3b;
-            border: 1px solid #14532d;
-        }
-        .toggle-dot {
-            background-color: #166534;
-        }
-        .toggle-active .toggle-bg {
-            background-color: #166534;
-            border-color: #22c55e;
-        }
-        .toggle-active .toggle-dot {
-            background-color: #4ade80;
-            transform: translateX(100%);
+        /* Needed for the specific toast animation to match our functionality while keeping standard classes */
+        .toast-show {
+            transform: translateY(0);
+            opacity: 1;
         }
     </style>
 </head>
-<body class="min-h-screen p-4 flex flex-col items-center">
 
-    <!-- Wrapper -->
-    <div class="w-full max-w-6xl border border-green-900 shadow-[0_0_15px_rgba(22,101,52,0.5)] flex flex-col">
-        
+<body class="bg-slate-50 text-slate-800 dark:bg-black dark:text-green-500 transition-colors duration-300 min-h-screen p-2 md:p-4 dark:selection:bg-green-900 dark:selection:text-white">
+
+    <!-- Wrapper: Light(Rounded/White/Shadow) vs Dark(Square/Black/GreenBorder/Glow) -->
+    <div class="max-w-4xl mx-auto 
+        bg-white rounded-xl shadow-lg border border-slate-200
+        dark:bg-slate-950 dark:rounded-none dark:shadow-[0_0_20px_rgba(34,197,94,0.2)] dark:border-green-800
+        overflow-hidden transition-all duration-300">
+
         <!-- Header -->
-        <div class="border-b border-green-900 px-4 py-3 flex justify-between items-center bg-black">
-            <button class="px-3 py-1 text-sm font-bold bg-green-900 text-black border border-green-500 hover:bg-green-800 transition-colors uppercase tracking-widest shadow-[0_0_8px_rgba(34,197,94,0.4)]">
-                INFRA-TCT
-            </button>
-            <div class="text-center">
-                <h1 class="text-2xl font-bold uppercase tracking-widest glitch-text">ISP CONFIG GENERATOR</h1>
-                <p class="text-green-800 text-xs mt-1">> Initializing system... Ready.</p>
+        <div class="px-4 py-2 flex justify-between items-center
+            bg-slate-900 border-b border-slate-200
+            dark:bg-black dark:border-green-800">
+            
+            <!-- Link Back to Main App -->
+            <a href="app-past/index.html"
+                class="mr-4 px-3 py-1 text-xs font-bold uppercase tracking-wider border transition-all text-slate-400 border-slate-600 hover:text-white hover:border-white dark:text-green-800 dark:border-green-900 dark:hover:text-green-400 dark:hover:border-green-500">
+                APP-MAIN
+            </a>
+            
+            <div>
+                <!-- Title: White in Light Mode header (since header is dark slate), Green in Dark Mode -->
+                <h1 class="text-xl font-bold text-white dark:text-green-400 uppercase tracking-widest dark:glitch-text">
+                    ISP Config Generator</h1>
+                <p class="text-slate-400 dark:text-green-800 text-xs">
+                    <span class="hidden dark:inline">Initializing system... Ready.</span>
+                    <span class="dark:hidden">Generate customer configuration instantly</span>
+                </p>
             </div>
-            <div class="flex items-center gap-3">
-                <button class="text-xs border border-green-800 px-3 py-1 hover:bg-green-900/40 transition-colors tracking-widest uppercase">
-                    ADMIN
-                </button>
-                <button class="text-xs border border-green-800 px-3 py-1 hover:bg-green-900/40 transition-colors tracking-widest text-red-500 border-red-900 hover:bg-red-900/20 uppercase">
-                    EXIT
-                </button>
-                <div class="text-xs animate-pulse font-bold tracking-widest">● ONLINE</div>
+
+            <div class="flex items-center gap-2">
+                <!-- Status Indicator -->
+                <div class="text-xs text-green-400 dark:text-green-900 animate-pulse font-mono">● ONLINE</div>
             </div>
         </div>
 
-        <!-- Main Content -->
-        <div class="flex flex-col md:flex-row p-4 gap-6">
-            
-            <!-- LEFT COLUMN -->
-            <div class="flex-1 space-y-4">
-                
+        <div class="p-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+            <!-- Left Column: Inputs -->
+            <div class="space-y-2">
                 <div>
-                    <label class="block text-sm font-bold mb-2 uppercase tracking-widest glitch-text">> > CUSTOMER INFO BLOCK</label>
-                    <textarea id="customerTicket" rows="8" class="input-field w-full p-3 font-mono text-sm leading-relaxed" placeholder="Paste customer ticket here...&#10;ID: 114216&#10;Name: Nev Sophanny&#10;Address: Borey Chip Mong 50M #03 St.P08&#10;Phone: 85599999343&#10;Type: PPPoE&#10;Package: TODAY Fiber Link-Light 70Mbps&#10;TD0350-TCT"></textarea>
+                    <label class="block text-xs font-bold mb-1 uppercase tracking-wider text-slate-700 dark:text-green-700">
+                        <span class="dark:hidden">Customer Info Block</span>
+                        <span class="hidden dark:inline">>> Customer Info Block</span>
+                    </label>
+                    <textarea id="customerTicket" rows="8"
+                        class="w-full px-3 py-2 text-sm transition-all
+                        bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:ring-blue-500 focus:border-blue-500
+                        dark:bg-black dark:border-green-800 dark:rounded-none dark:font-mono dark:text-green-400 dark:placeholder-green-900 dark:focus:border-green-500 dark:focus:ring-green-500"
+                        placeholder="Paste text here like:&#10;ID: 114216&#10;Name: Nev Sophanny&#10;Address: Borey Chip Mong 50M #03 St.P08&#10;Phone: 85599999343&#10;Type: PPPoE&#10;Package: TODAY Fiber Link-Light 70Mbps&#10;TD0350-TCT"></textarea>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-bold mb-2 uppercase tracking-widest glitch-text">> > SN</label>
-                    <input type="text" id="snInput" class="input-field w-full p-3 font-mono text-sm" placeholder="4857544327C2CFA4">
+                    <label class="block text-xs font-bold mb-1 uppercase tracking-wider text-slate-700 dark:text-green-700">
+                        <span class="dark:hidden">SN</span>
+                        <span class="hidden dark:inline">>> SN</span>
+                    </label>
+                    <input type="text" id="snInput"
+                        class="w-full px-3 py-2 text-sm transition-all
+                        bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:ring-blue-500 focus:border-blue-500
+                        dark:bg-black dark:border-green-800 dark:rounded-none dark:font-mono dark:text-green-400 dark:placeholder-green-900 dark:focus:border-green-500 dark:focus:ring-green-500"
+                        placeholder="4857544327C2CFA4">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-bold mb-2 uppercase tracking-widest glitch-text">> > SERVICE TYPE</label>
-                    <select id="serviceType" class="input-field w-full p-3 font-mono text-sm">
+                    <label class="block text-xs font-bold mb-1 uppercase tracking-wider text-slate-700 dark:text-green-700">
+                        <span class="dark:hidden">Service Type</span>
+                        <span class="hidden dark:inline">>> Service Type</span>
+                    </label>
+                    <select id="serviceType"
+                        class="w-full px-3 py-2 text-sm transition-all
+                        bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:ring-blue-500 focus:border-blue-500
+                        dark:bg-black dark:border-green-800 dark:rounded-none dark:font-mono dark:text-green-400 dark:focus:border-green-500">
                         <option value="2422">2422 (PPPoE)</option>
                         <option value="2423">2423 (Static IP)</option>
                         <option value="67">67 (@fiberlink / @todayhome)</option>
@@ -125,61 +136,114 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-bold mb-2 uppercase tracking-widest glitch-text">> > GPON / EPON INTERFACE</label>
-                    <div class="flex gap-2">
-                        <select id="interfacePrefix" class="input-field p-3 font-mono text-sm w-1/3">
-                            <option value="EPON0/1:">EPON0/1:</option>
+                    <label class="block text-xs font-bold mb-1 uppercase tracking-wider text-slate-700 dark:text-green-700">
+                        <span class="dark:hidden">GPON/EPON:ONU</span>
+                        <span class="hidden dark:inline">>> GPON/EPON:ONU</span>
+                    </label>
+                    <div class="flex gap-1">
+                        <select id="interfacePrefix"
+                            class="px-2 py-2 text-sm transition-all shrink-0
+                            bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:ring-blue-500 focus:border-blue-500
+                            dark:bg-black dark:border-green-800 dark:rounded-none dark:font-mono dark:text-green-400 dark:focus:border-green-500">
+                            <option value="EPON0/1:" selected>EPON0/1:</option>
                             <option value="GPON0/1:">GPON0/1:</option>
                         </select>
-                        <input type="text" id="onuId" class="input-field w-2/3 p-3 font-mono text-sm" placeholder="ONU ID (e.g. 36)">
+                        <input type="text" id="onuId"
+                            class="w-full min-w-0 px-3 py-2 text-sm transition-all
+                            bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:ring-blue-500 focus:border-blue-500
+                            dark:bg-black dark:border-green-800 dark:rounded-none dark:font-mono dark:text-green-400 dark:placeholder-green-900 dark:focus:border-green-500"
+                            placeholder="ONU ID (e.g. 36)">
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between border border-green-900 p-3">
-                    <label class="text-sm font-bold uppercase tracking-widest glitch-text">> > IPCAM_MODE</label>
-                    <div class="toggle-container cursor-pointer w-12 h-6 rounded-full toggle-bg relative transition-colors duration-300" onclick="this.classList.toggle('toggle-active')">
-                        <div class="toggle-dot absolute top-0.5 left-0.5 w-5 h-5 rounded-full transition-transform duration-300"></div>
-                    </div>
+                <!-- IPCAM Toggle (Visual match only to structure for consistency, JS toggle classes omitted for briefity if unused in script, but matches DOM logic) -->
+                <div class="flex items-center justify-between py-1">
+                    <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-green-700 cursor-pointer">
+                        <span class="dark:hidden">IPCAM Mode</span>
+                        <span class="hidden dark:inline">>> IPCAM_MODE</span>
+                    </label>
+                    <button id="ipcamToggle" type="button" class="relative w-12 h-6 rounded-full transition-colors duration-300 bg-slate-300 dark:bg-slate-800 dark:border dark:border-green-900 dark:rounded-none" onclick="toggleBtnVisual(this)">
+                        <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full transition-all duration-300 bg-white shadow dark:bg-green-900 dark:rounded-none"></span>
+                    </button>
                 </div>
 
-                <div class="flex items-center justify-between border border-green-900 p-3">
-                    <label class="text-sm font-bold uppercase tracking-widest glitch-text">> > DNS_MODE</label>
-                    <div class="toggle-container cursor-pointer w-12 h-6 rounded-full toggle-bg relative transition-colors duration-300" onclick="this.classList.toggle('toggle-active')">
-                        <div class="toggle-dot absolute top-0.5 left-0.5 w-5 h-5 rounded-full transition-transform duration-300"></div>
-                    </div>
+                <!-- DNS Toggle -->
+                <div class="flex items-center justify-between py-1">
+                    <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-green-700 cursor-pointer">
+                        <span class="dark:hidden">DNS Mode</span>
+                        <span class="hidden dark:inline">>> DNS_MODE</span>
+                    </label>
+                    <button id="dnsToggle" type="button" class="relative w-12 h-6 rounded-full transition-colors duration-300 bg-slate-300 dark:bg-slate-800 dark:border dark:border-green-900 dark:rounded-none" onclick="toggleBtnVisual(this)">
+                        <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full transition-all duration-300 bg-white shadow dark:bg-green-900 dark:rounded-none"></span>
+                    </button>
                 </div>
-
-                <button onclick="executeGeneration()" class="w-full py-4 mt-2 font-bold uppercase tracking-widest text-black bg-green-500 hover:bg-green-400 transition-all shadow-[0_0_10px_rgba(34,197,94,0.6)] hover:shadow-[0_0_20px_rgba(74,222,128,0.8)] border border-green-300">
-                    [ EXECUTE_GENERATION ]
+                
+                <button id="generateBtn" onclick="executeGeneration()"
+                    class="w-full font-bold py-2 transition-all shadow-sm uppercase tracking-wider text-sm
+                    bg-blue-600 hover:bg-blue-700 text-white rounded-lg
+                    dark:bg-green-700 dark:hover:bg-green-600 dark:text-black dark:rounded-none dark:shadow-[0_0_10px_rgba(21,128,61,0.5)] dark:hover:shadow-[0_0_15px_rgba(34,197,94,0.7)] dark:border dark:border-green-500">
+                    <span class="dark:hidden">Generate Configuration</span>
+                    <span class="hidden dark:inline">[ EXECUTE_GENERATION ]</span>
                 </button>
-
             </div>
 
-            <!-- RIGHT COLUMN -->
-            <div class="flex-1 space-y-6">
-                
-                <!-- OUTPUT 1 -->
-                <div class="border border-green-900 relative p-4 bg-green-950/20 shadow-inner">
-                    <div class="flex justify-between items-center mb-4 border-b border-green-900 pb-2">
-                        <label class="text-sm font-bold uppercase tracking-widest glitch-text">> > OUTPUT_OUR_TEAM</label>
-                        <button onclick="copyOutput('output1', this)" class="text-xs px-3 py-1 border border-green-700 hover:bg-green-900 text-green-400 transition-colors uppercase tracking-widest flex items-center gap-2">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                            CPY
+            <!-- Right Column: Outputs -->
+            <div class="space-y-3">
+
+                <!-- Output 1 -->
+                <div class="p-3 relative group transition-all
+                    bg-slate-50 rounded-lg border border-slate-200
+                    dark:bg-black dark:rounded-none dark:border-green-800 dark:shadow-inner dark:shadow-green-900/20">
+
+                    <div class="flex justify-between items-center mb-2 pb-2
+                        border-b border-transparent dark:border-green-900">
+                        <label class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-green-600">
+                            <span class="dark:hidden">Output Our Team</span>
+                            <span class="hidden dark:inline">>> OUTPUT_OUR_TEAM</span>
+                        </label>
+                        <button onclick="copyOutput('output1', this)"
+                            class="text-xs px-3 py-1 transition-colors flex items-center gap-1 font-mono uppercase
+                            bg-white hover:bg-slate-100 text-slate-600 border border-slate-300 rounded
+                            dark:bg-slate-900 dark:hover:bg-green-900 dark:text-green-500 dark:border-green-700 dark:rounded-none">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                            <span class="dark:hidden">Copy</span>
+                            <span class="hidden dark:inline">CPY</span>
                         </button>
                     </div>
-                    <textarea id="output1" rows="9" readonly class="w-full bg-transparent border-none text-green-400 font-mono text-sm resize-none focus:outline-none placeholder-green-900/50 leading-relaxed" placeholder="Awaiting execution..."></textarea>
+                    <textarea id="output1" rows="8" readonly onclick="this.removeAttribute('readonly');" 
+                        class="w-full text-xs font-mono whitespace-pre overflow-x-auto min-h-[60px] bg-transparent border-0 focus:ring-0 p-0 resize-y text-slate-800 dark:text-green-300"></textarea>
                 </div>
 
-                <!-- OUTPUT 2 -->
-                <div class="border border-green-900 relative p-4 bg-green-950/20 shadow-inner">
-                    <div class="flex justify-between items-center mb-4 border-b border-green-900 pb-2">
-                        <label class="text-sm font-bold uppercase tracking-widest glitch-text">> > TO_TCT_GROUP</label>
-                        <button onclick="copyOutput('output2', this)" class="text-xs px-3 py-1 border border-green-700 hover:bg-green-900 text-green-400 transition-colors uppercase tracking-widest flex items-center gap-2">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                            CPY
+                <!-- Output 2 -->
+                <div class="p-3 relative group transition-all
+                    bg-slate-50 rounded-lg border border-slate-200
+                    dark:bg-black dark:rounded-none dark:border-green-800 dark:shadow-inner dark:shadow-green-900/20">
+
+                    <div class="flex justify-between items-center mb-2 pb-2
+                        border-b border-transparent dark:border-green-900">
+                        <label class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-green-600">
+                            <span class="dark:hidden">To TCT Group</span>
+                            <span class="hidden dark:inline">>> TO_TCT_GROUP</span>
+                        </label>
+                        <button onclick="copyOutput('output2', this)"
+                            class="text-xs px-3 py-1 transition-colors flex items-center gap-1 font-mono uppercase
+                            bg-white hover:bg-slate-100 text-slate-600 border border-slate-300 rounded
+                            dark:bg-slate-900 dark:hover:bg-green-900 dark:text-green-500 dark:border-green-700 dark:rounded-none">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                            <span class="dark:hidden">Copy</span>
+                            <span class="hidden dark:inline">CPY</span>
                         </button>
                     </div>
-                    <textarea id="output2" rows="8" readonly class="w-full bg-transparent border-none text-green-400 font-mono text-sm resize-none focus:outline-none placeholder-green-900/50 leading-relaxed" placeholder="Awaiting execution..."></textarea>
+                    <textarea id="output2" rows="8" readonly onclick="this.removeAttribute('readonly');" 
+                        class="w-full text-xs font-mono whitespace-pre overflow-x-auto min-h-[60px] bg-transparent border-0 focus:ring-0 p-0 resize-y text-slate-800 dark:text-green-300"></textarea>
                 </div>
 
             </div>
@@ -187,44 +251,47 @@
     </div>
 
     <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-4 right-4 bg-green-500 text-black px-4 py-2 font-bold uppercase tracking-widest transform translate-y-10 opacity-0 transition-all duration-300 shadow-[0_0_10px_rgba(34,197,94,0.6)]">
+    <div id="toast" class="fixed bottom-4 right-4 text-xs bg-slate-800 text-white dark:bg-green-500 dark:text-black dark:border-2 dark:border-black px-4 py-2 font-bold uppercase tracking-widest transform translate-y-20 opacity-0 transition-all duration-300 shadow-lg dark:shadow-[0_0_10px_rgba(34,197,94,0.6)] z-50">
         DATA COPIED TO CLIPBOARD
     </div>
 
     <script>
+        // Copy function using new visual feedback pattern
         function copyOutput(elementId, btnElement) {
             const textarea = document.getElementById(elementId);
             textarea.select();
             document.execCommand('copy');
             window.getSelection().removeAllRanges();
             
-            // Visual feedback on button
-            const originalText = btnElement.innerHTML;
-            btnElement.innerHTML = 'COPIED';
-            btnElement.classList.add('bg-green-800', 'text-white');
-            
             // Show toast
             const toast = document.getElementById('toast');
-            toast.classList.remove('translate-y-10', 'opacity-0');
+            toast.classList.add('toast-show');
             
             setTimeout(() => {
-                btnElement.innerHTML = originalText;
-                btnElement.classList.remove('bg-green-800', 'text-white');
-                toast.classList.add('translate-y-10', 'opacity-0');
+                toast.classList.remove('toast-show');
             }, 2000);
         }
 
+        // Dummy toggle UI function to support buttons matching app-past/index.html layout identicals
+        function toggleBtnVisual(btn) {
+            const dot = btn.querySelector('span');
+            if(btn.classList.contains('dark:bg-slate-800')) {
+                btn.classList.replace('dark:bg-slate-800', 'dark:bg-green-700');
+                btn.classList.replace('bg-slate-300', 'bg-blue-500');
+                dot.style.transform = 'translateX(24px)';
+            } else {
+                btn.classList.replace('dark:bg-green-700', 'dark:bg-slate-800');
+                btn.classList.replace('bg-blue-500', 'bg-slate-300');
+                dot.style.transform = 'translateX(0)';
+            }
+        }
+
         function extractData(text) {
-            // Updated extraction rules based on realistic patterns
             const idMatch = text.match(/ID:\s*(\w+)/i);
             const nameMatch = text.match(/Name:\s*([^\n]+)/i);
             const phoneMatch = text.match(/Phone:\s*(\d+)/i);
             const packageMatch = text.match(/Package:\s*([^\n]+)/i);
-            
-            // Order number format: TDxxxx
             const orderMatch = text.match(/(TD\d{4})/i);
-
-            // Optional: Also catch the full TDxxxx-TCT if needed, but we just need TDxxxx for Output 2
             const fullOrderMatch = text.match(/(TD\d{4}-TCT)/i);
 
             return {
@@ -277,4 +344,5 @@
         }
     </script>
 </body>
+
 </html>
