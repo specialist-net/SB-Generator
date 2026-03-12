@@ -287,6 +287,17 @@ function copyOutput(elementId, btnElement) {
     setTimeout(() => { toast.classList.remove('toast-show'); }, 2000);
 }
 
+// Theme Toggle Logic
+function toggleTheme() {
+    const html = document.documentElement;
+    const currentTheme = html.className;
+    const newTheme = currentTheme === 'dark-theme' ? 'light-theme' : 'dark-theme';
+    
+    html.className = newTheme;
+    html.setAttribute('data-theme', newTheme);
+    localStorage.setItem('ispTheme', newTheme);
+}
+
 // Interface Helper
 function updateInterfaceInput() {
     const prefix = document.getElementById('interfacePrefix').value;

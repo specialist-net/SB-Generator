@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -7,76 +7,98 @@
     <title>ISP Config Generator</title>
     <link rel="icon" href="app-past/favicon.jpg" type="image/jpeg">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        noc: {
-                            bg: '#0a0a0a',
-                            panel: '#111111',
-                            green: '#00ff9c',
-                            greenDim: 'rgba(0, 255, 156, 0.15)',
-                            text: '#e0e0e0',
-                            textMuted: '#888888'
-                        }
-                    },
-                    fontFamily: {
-                        mono: ['"JetBrains Mono"', 'monospace']
-                    }
-                }
-            }
-        }
-    </script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- THEME INITIALIZATION SCRIPT -->
+    <script>
+        const savedTheme = localStorage.getItem('ispTheme') || 'dark-theme';
+        document.documentElement.className = savedTheme;
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+    
     <style>
-        body {
-            font-family: 'JetBrains Mono', monospace;
-            background-color: #0a0a0a;
-            color: #e0e0e0;
+        /* Theme Variables */
+        :root.dark-theme {
+            --bg-color: #050505;
+            --panel-bg: #0b0b0b;
+            --border-color: #00ff9c;
+            --text-color: #00ff9c;
+            --text-muted: #888888;
+            --input-bg: #000000;
+            --input-border: #333333;
+            --copy-bg: rgba(0, 255, 156, 0.1);
+            --copy-text: #00ff9c;
+            --copy-radius: 4px;
+            --panel-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            --btn-hover-bg: #00ff9c;
+            --btn-hover-text: #000000;
         }
 
-        /* Custom Scrollbar for Hacker Mode */
+        :root.light-theme {
+            --bg-color: #f6f8fa;
+            --panel-bg: #ffffff;
+            --border-color: #d0d7de;
+            --text-color: #1f2328;
+            --text-muted: #656d76;
+            --input-bg: #f6f8fa;
+            --input-border: #d0d7de;
+            --copy-bg: #00a86b;
+            --copy-text: #ffffff;
+            --copy-radius: 6px;
+            --panel-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --btn-hover-bg: #ffffff;
+            --btn-hover-text: #00a86b;
+        }
+
+        /* Core Application Logic */
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #111;
+            background: var(--panel-bg);
         }
         ::-webkit-scrollbar-thumb {
-            background: #00ff9c;
+            background: var(--border-color);
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #00cc7d;
+            opacity: 0.8;
         }
         
         .noc-panel {
-            background-color: #111111;
-            border: 1px solid #00ff9c;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 16px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            box-shadow: var(--panel-shadow);
+            transition: background-color 0.3s, border-color 0.3s;
         }
         
         .noc-input {
-            background-color: #000000;
-            border: 1px solid #333333;
-            color: #e0e0e0;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-color);
             border-radius: 4px;
             transition: all 0.2s ease;
         }
         
         .noc-input:focus {
-            border-color: #00ff9c;
+            border-color: var(--border-color);
             outline: none;
-            box-shadow: 0 0 0 1px rgba(0, 255, 156, 0.5);
+            box-shadow: 0 0 0 1px var(--border-color);
         }
         
         .noc-label {
-            color: #00ff9c;
+            color: var(--border-color);
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -85,7 +107,45 @@
             display: block;
         }
 
-        /* Toast Animation */
+        .noc-btn {
+            border: 1px solid var(--border-color);
+            color: var(--border-color);
+            background: transparent;
+        }
+
+        .noc-btn.filled {
+            background: var(--border-color);
+            color: var(--bg-color);
+        }
+
+        .noc-btn:hover {
+            background-color: var(--btn-hover-bg);
+            color: var(--btn-hover-text);
+        }
+        
+        .copy-btn {
+            background-color: var(--copy-bg);
+            color: var(--copy-text);
+            border: 1px solid var(--border-color);
+            border-radius: var(--copy-radius);
+            transition: all 0.2s;
+        }
+        .copy-btn:hover {
+            opacity: 0.8;
+            border-color: var(--copy-text);
+        }
+
+        .text-var-muted { color: var(--text-muted); }
+        .border-var-color { border-color: var(--border-color); }
+        .bg-var-color { background-color: var(--border-color); }
+
+        .noc-inner-box {
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+        }
+
+        .text-var-main { color: var(--text-color); }
+
         #toast {
             opacity: 0;
             visibility: hidden;
@@ -95,31 +155,41 @@
             opacity: 1;
             visibility: visible;
         }
+        
+        ::selection {
+            background-color: var(--border-color);
+            color: var(--bg-color);
+        }
     </style>
 </head>
 
-<body class="min-h-screen p-4 flex flex-col selection:bg-noc-green selection:text-black">
+<body class="min-h-screen p-4 flex flex-col">
 
     <!-- Header -->
     <header class="flex justify-between items-center mb-6 px-2">
         <div>
-            <h1 class="text-2xl font-bold text-noc-green uppercase tracking-widest leading-tight">
+            <h1 class="text-2xl font-bold uppercase tracking-widest leading-tight text-var-main">
                 ISP Config Generator
             </h1>
-            <p class="text-noc-textMuted text-xs tracking-wide">
+            <p class="text-var-muted text-xs tracking-wide">
                 SYSTEM INITIALIZED :: NOC OPERATIONS DASHBOARD (TCT)
             </p>
         </div>
         <div class="flex items-center gap-4">
-            <a href="app-past/index.html" class="text-xs text-noc-green border border-noc-green px-3 py-1 rounded hover:bg-noc-green hover:text-black transition-colors uppercase font-bold">
+            <button id="themeToggleBtn" onclick="toggleTheme()" class="text-xs noc-btn px-3 py-1 rounded transition-colors uppercase font-bold tracking-widest">
+                🌙 Dark | ☀ Light
+            </button>
+            <div class="h-4 border-l border-var-color mx-1"></div>
+
+            <a href="app-past/index.html" class="text-xs noc-btn px-3 py-1 rounded transition-colors uppercase font-bold">
                 APP-MAIN
             </a>
-            <a href="infra-tct.html" class="text-xs text-black bg-noc-green border border-noc-green px-3 py-1 rounded hover:opacity-80 transition-colors uppercase font-bold">
+            <a href="infra-tct.html" class="text-xs noc-btn filled px-3 py-1 rounded transition-colors uppercase font-bold">
                 INFRA-TCT
             </a>
             
-            <div class="text-xs text-noc-green animate-pulse flex items-center gap-2 border border-noc-green px-3 py-1 rounded bg-noc-greenDim">
-                <div class="w-2 h-2 rounded-full bg-noc-green"></div>
+            <div class="text-xs animate-pulse flex items-center gap-2 border-var-color border px-3 py-1 rounded" style="color:var(--border-color); background:var(--copy-bg)">
+                <div class="w-2 h-2 rounded-full bg-var-color"></div>
                 ONLINE
             </div>
         </div>
@@ -130,7 +200,7 @@
 
         <!-- LEFT PANEL: CUSTOMER INFO -->
         <section class="noc-panel flex flex-col h-full">
-            <h2 class="text-noc-green font-bold mb-4 flex items-center gap-2 border-b border-noc-green/30 pb-2">
+            <h2 class="font-bold mb-4 flex items-center gap-2 border-b border-var-color pb-2 text-var-main">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                 >> CUSTOMER INFO
             </h2>
@@ -141,24 +211,24 @@
                     placeholder="Paste TCT customer ticket here..."></textarea>
             </div>
 
-            <div class="bg-black/50 p-3 rounded border border-gray-800 space-y-3">
-                <h3 class="noc-label text-noc-textMuted border-b border-gray-800 pb-1 mb-2">Parsed Data Extractor</h3>
+            <div class="noc-inner-box p-3 rounded space-y-3">
+                <h3 class="noc-label border-b border-var-color pb-1 mb-2 opacity-80">Parsed Data Extractor</h3>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="text-[10px] uppercase text-noc-textMuted block mb-1">Customer ID</label>
-                        <div id="disp_id" class="text-sm font-bold text-white truncate h-5">--</div>
+                        <label class="text-[10px] uppercase block mb-1 text-var-muted">Customer ID</label>
+                        <div id="disp_id" class="text-sm font-bold truncate h-5 text-var-main">--</div>
                     </div>
                     <div>
-                        <label class="text-[10px] uppercase text-noc-textMuted block mb-1">Order ID</label>
-                        <div id="disp_order" class="text-sm font-bold text-white truncate h-5">--</div>
+                        <label class="text-[10px] uppercase block mb-1 text-var-muted">Order ID</label>
+                        <div id="disp_order" class="text-sm font-bold truncate h-5 text-var-main">--</div>
                     </div>
-                    <div class="col-span-2 border-t border-gray-800 pt-2">
-                        <label class="text-[10px] uppercase text-noc-textMuted block mb-1">Customer Name</label>
-                        <div id="disp_name" class="text-sm font-bold text-white truncate h-5">--</div>
+                    <div class="col-span-2 border-t border-var-color pt-2">
+                        <label class="text-[10px] uppercase block mb-1 text-var-muted">Customer Name</label>
+                        <div id="disp_name" class="text-sm font-bold truncate h-5 text-var-main">--</div>
                     </div>
                     <div class="col-span-2">
-                        <label class="text-[10px] uppercase text-noc-textMuted block mb-1">Phone</label>
-                        <div id="disp_phone" class="text-sm font-bold text-white truncate h-5">--</div>
+                        <label class="text-[10px] uppercase block mb-1 text-var-muted">Phone</label>
+                        <div id="disp_phone" class="text-sm font-bold truncate h-5 text-var-main">--</div>
                     </div>
                 </div>
             </div>
@@ -166,7 +236,7 @@
 
         <!-- CENTER PANEL: NETWORK CONFIG -->
         <section class="noc-panel flex flex-col h-full">
-            <h2 class="text-noc-green font-bold mb-4 flex items-center gap-2 border-b border-noc-green/30 pb-2">
+            <h2 class="font-bold mb-4 flex items-center gap-2 border-b border-var-color pb-2 text-var-main">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 >> NETWORK CONFIGURATION
             </h2>
@@ -209,34 +279,34 @@
                 </div>
 
                 <!-- Toggles Container -->
-                <div class="pt-4 mt-2 border-t border-gray-800 space-y-3">
+                <div class="pt-4 mt-2 border-t border-var-color space-y-3">
                     <!-- IPCAM -->
                     <div class="flex items-center justify-between opacity-50">
                         <label class="noc-label !mb-0 cursor-not-allowed">>> IPCAM_MODE</label>
-                        <button type="button" class="relative w-10 h-5 rounded-full transition-colors duration-300 bg-gray-800 border border-gray-600 cursor-not-allowed">
-                            <span class="absolute top-[1px] left-[2px] w-4 h-4 rounded-full transition-all duration-300 bg-gray-500"></span>
+                        <button type="button" class="relative w-10 h-5 rounded-full transition-colors duration-300 border border-var-color cursor-not-allowed" style="background-color: var(--input-border)">
+                            <span class="absolute top-[1px] left-[2px] w-4 h-4 rounded-full transition-all duration-300" style="background-color: var(--text-muted)"></span>
                         </button>
                     </div>
 
                     <!-- DNS -->
                     <div class="flex items-center justify-between opacity-50">
                         <label class="noc-label !mb-0 cursor-not-allowed">>> DNS_MODE</label>
-                        <button type="button" class="relative w-10 h-5 rounded-full transition-colors duration-300 bg-gray-800 border border-gray-600 cursor-not-allowed">
-                            <span class="absolute top-[1px] left-[2px] w-4 h-4 rounded-full transition-all duration-300 bg-gray-500"></span>
+                        <button type="button" class="relative w-10 h-5 rounded-full transition-colors duration-300 border border-var-color cursor-not-allowed" style="background-color: var(--input-border)">
+                            <span class="absolute top-[1px] left-[2px] w-4 h-4 rounded-full transition-all duration-300" style="background-color: var(--text-muted)"></span>
                         </button>
                     </div>
 
                     <!-- SPEED CALCULATOR -->
                     <div class="flex items-center justify-between">
                         <label class="noc-label !mb-0 cursor-pointer" onclick="toggleSpeed()">>> SPEED_CALCULATOR</label>
-                        <button id="speedToggle" type="button" class="relative w-10 h-5 rounded-full transition-colors duration-300 bg-gray-800 border border-gray-600" onclick="toggleSpeed()">
-                            <span id="speedDot" class="absolute top-[1px] left-[2px] w-4 h-4 rounded-full transition-all duration-300 bg-gray-500"></span>
+                        <button id="speedToggle" type="button" class="relative w-10 h-5 rounded-full transition-colors duration-300 border border-var-color" style="background-color: var(--input-border)" onclick="toggleSpeed()">
+                            <span id="speedDot" class="absolute top-[1px] left-[2px] w-4 h-4 rounded-full transition-all duration-300" style="background-color: var(--text-muted)"></span>
                         </button>
                     </div>
-                    <div id="speedCalculatorFields" class="hidden bg-black/40 p-2 rounded border border-gray-800">
+                    <div id="speedCalculatorFields" class="hidden noc-inner-box p-2 rounded">
                         <label class="noc-label">Speed (Mbps)</label>
                         <input type="number" id="speedInput" class="noc-input w-full p-1.5 text-xs mb-2" placeholder="e.g. 50" oninput="calculateSpeed()">
-                        <input type="text" id="speedOutput" readonly onclick="this.select(); document.execCommand('copy');" class="w-full text-[11px] font-mono bg-transparent border-0 text-noc-green focus:outline-none" placeholder="Awaiting input...">
+                        <input type="text" id="speedOutput" readonly onclick="this.select(); document.execCommand('copy');" class="w-full text-[11px] font-mono bg-transparent border-0 focus:outline-none text-var-main" placeholder="Awaiting input...">
                     </div>
                 </div>
             </div>
@@ -245,37 +315,31 @@
         <!-- RIGHT PANEL: OUTPUT (STACKED) -->
         <section class="noc-panel flex flex-col h-full gap-4 overflow-y-auto">
             
-            <!-- Output 1 -->
             <div class="flex flex-col h-[200px] shrink-0">
                 <div class="flex justify-between items-center mb-1">
                     <label class="noc-label !mb-0">>> USER_INFO_OUTPUT</label>
-                    <button onclick="copyOutput('output1', this)" class="text-[10px] px-2 py-1 flex items-center gap-1 font-mono uppercase bg-noc-green/10 hover:bg-noc-green/20 text-noc-green border border-noc-green/50 rounded transition-colors">
+                    <button onclick="copyOutput('output1', this)" class="copy-btn text-[10px] px-3 py-1 flex items-center gap-1 font-mono uppercase font-bold">
                         COPY
                     </button>
                 </div>
                 <textarea id="output1" readonly onclick="this.select();" class="noc-input w-full flex-grow p-3 text-xs resize-none" placeholder="Our Team Format will appear here..."></textarea>
             </div>
 
-            <!-- Output 2 -->
             <div class="flex flex-col h-[200px] shrink-0">
                 <div class="flex justify-between items-center mb-1">
                     <label class="noc-label !mb-0">>> TO_TCT_GROUP</label>
-                    <button onclick="copyOutput('output2', this)" class="text-[10px] px-2 py-1 flex items-center gap-1 font-mono uppercase bg-noc-green/10 hover:bg-noc-green/20 text-noc-green border border-noc-green/50 rounded transition-colors">
+                    <button onclick="copyOutput('output2', this)" class="copy-btn text-[10px] px-3 py-1 flex items-center gap-1 font-mono uppercase font-bold">
                         COPY
                     </button>
                 </div>
                 <textarea id="output2" readonly onclick="this.select();" class="noc-input w-full flex-grow p-3 text-xs resize-none" placeholder="TCT Group format will appear here..."></textarea>
             </div>
 
-            <!-- Note: Originally TCT Mode only had 2 outputs stacked. 
-                 If they require a 3rd (Command Line), we could add it, but requirement stated "Restore stacked outputs for TCT mode USER_INFO, COMMAND_LINE, TCT_GROUP." 
-                 So I will include the 3rd box just in case, even if original tct math didn't build it explicitly.
-            -->
             <div class="flex flex-col h-[200px] shrink-0 opacity-50">
                 <div class="flex justify-between items-center mb-1">
                     <label class="noc-label !mb-0">>> COMMAND_LINE_OUTPUT (HIDDEN IN TCT)</label>
                 </div>
-                <textarea readonly class="noc-input w-full flex-grow p-3 text-xs resize-none bg-gray-900 border-gray-800" placeholder="Use App-Main for ONU Commands"></textarea>
+                <textarea readonly class="noc-input w-full flex-grow p-3 text-xs resize-none" style="background-color: var(--panel-bg); color: var(--text-muted)" placeholder="Use App-Main for ONU Commands"></textarea>
             </div>
 
         </section>
@@ -284,22 +348,32 @@
 
     <!-- Bottom Action Bar -->
     <div class="mt-6 flex justify-center items-center gap-6 mb-2">
-        <button onclick="executeGeneration()" class="bg-noc-green text-black font-bold py-3 px-8 rounded-lg shadow-[0_0_15px_rgba(0,255,156,0.3)] hover:shadow-[0_0_25px_rgba(0,255,156,0.5)] transition-all uppercase tracking-widest flex items-center gap-2">
+        <button onclick="executeGeneration()" class="noc-btn filled border border-var-color font-bold py-3 px-8 rounded-lg shadow-[0_0_15px_rgba(0,0,0,0.1)] transition-all uppercase tracking-widest flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
             GENERATE CONFIG
         </button>
-        <button onclick="resetAll()" class="text-noc-textMuted hover:text-white border border-gray-700 hover:border-gray-500 font-bold py-3 px-6 rounded-lg transition-all uppercase tracking-widest text-sm">
+        <button onclick="resetAll()" class="text-var-muted hover:text-var-main border border-var-color opacity-80 hover:opacity-100 font-bold py-3 px-6 rounded-lg transition-all uppercase tracking-widest text-sm">
             RESET
         </button>
     </div>
 
     <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-6 right-6 bg-noc-green text-black font-bold px-4 py-2 rounded shadow-lg flex items-center gap-2 z-50">
+    <div id="toast" class="fixed bottom-6 right-6 font-bold px-4 py-2 rounded shadow-lg flex items-center gap-2 z-50 text-xs tracking-widest uppercase border-var-color border" style="background-color: var(--copy-bg); color: var(--border-color)">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
         DATA COPIED TO CLIPBOARD
     </div>
 
     <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.className;
+            const newTheme = currentTheme === 'dark-theme' ? 'light-theme' : 'dark-theme';
+            
+            html.className = newTheme;
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('ispTheme', newTheme);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const customerInput = document.getElementById('customerTicket');
             
@@ -348,11 +422,11 @@
             if (speedEnabled) {
                 fields.classList.remove('hidden');
                 dot.style.transform = 'translateX(20px)';
-                dot.classList.replace('bg-gray-500', 'bg-noc-green');
+                dot.style.backgroundColor = 'var(--border-color)';
             } else {
                 fields.classList.add('hidden');
                 dot.style.transform = 'translateX(0)';
-                dot.classList.replace('bg-noc-green', 'bg-gray-500');
+                dot.style.backgroundColor = 'var(--text-muted)';
                 
                 document.getElementById('speedInput').value = '';
                 document.getElementById('speedOutput').value = '';
@@ -379,7 +453,6 @@
             const phoneMatch = text.match(/^\s*Phone:\s*([^\n\r]+)/im);
             const packageMatch = text.match(/^\s*Package:\s*([^\n\r]+)/im);
             
-            // Allow project code anywhere, but fallback neatly
             const orderMatch = text.match(/(TD\d{4})/i);
             const fullOrderMatch = text.match(/(TD\d{4}-TCT)/i);
 
