@@ -150,13 +150,7 @@ function generateConfig(event) {
     const interfaceStr = document.getElementById('interfaceInput').value;
     
     // Format MAC
-    const macStripped = macRaw.replace(/[^a-fA-F0-9]/g, '').toUpperCase();
-    
-    if (macStripped.length !== 12) {
-        alert("Invalid MAC address format");
-        return;
-    }
-    
+    const macStripped = macRaw.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
     const macClean = macStripped.slice(-8);
     
     // VLAN from Package Mode (For Command)
