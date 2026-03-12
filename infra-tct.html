@@ -353,7 +353,7 @@
                     <div id="speedCalculatorFields" class="hidden noc-inner-box p-2 rounded">
                         <label class="noc-label">Speed (Mbps)</label>
                         <input type="number" id="speedInput" class="noc-input w-full p-1.5 text-xs mb-2" placeholder="e.g. 50" oninput="calculateSpeed()">
-                        <input type="text" id="speedOutput" readonly onclick="this.select(); document.execCommand('copy');" class="w-full text-[11px] font-mono bg-transparent border-0 focus:outline-none text-var-main" placeholder="Awaiting input...">
+                        <input type="text" id="speedOutput" class="w-full text-[11px] font-mono bg-transparent border-0 focus:outline-none text-var-main" placeholder="Awaiting input...">
                     </div>
                 </div>
             </div>
@@ -369,7 +369,7 @@
                         COPY
                     </button>
                 </div>
-                <textarea id="userInfoOutput" readonly onclick="this.select();" class="noc-output-area w-full flex-grow p-3 text-xs resize-none" placeholder="User Information will appear here..."></textarea>
+                <textarea id="userInfoOutput" class="noc-output-area w-full flex-grow p-3 text-xs resize-none" placeholder="User Information will appear here..."></textarea>
             </div>
 
             <div class="flex flex-col h-[200px] shrink-0">
@@ -379,7 +379,7 @@
                         COPY
                     </button>
                 </div>
-                <textarea id="tctGroupOutput" readonly onclick="this.select();" class="noc-output-area w-full flex-grow p-3 text-xs resize-none" placeholder="TCT Group format will appear here..."></textarea>
+                <textarea id="tctGroupOutput" class="noc-output-area w-full flex-grow p-3 text-xs resize-none" placeholder="TCT Group format will appear here..."></textarea>
             </div>
 
         </section>
