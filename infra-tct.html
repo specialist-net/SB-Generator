@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISP CONFIG GENERATOR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: #000;
+            color: #22c55e;
+            margin: 0;
+            padding: 0;
+        }
+
+        ::selection {
+            background-color: #14532d;
+            color: #fff;
+        }
+
+        /* Custom Scrollbar for Hacker Mode */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #15803d;
+            border-radius: 0px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #22c55e;
+        }
+
+        .glitch-text {
+            text-shadow: 0 0 5px #22c55e;
+        }
+
+        .input-field {
+            background-color: #000;
+            border: 1px solid #166534;
+            color: #4ade80;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .input-field:focus {
+            border-color: #22c55e;
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
+        }
+        .input-field::placeholder {
+            color: #064e3b;
+        }
+        
+        .toggle-bg {
+            background-color: #064e3b;
+            border: 1px solid #14532d;
+        }
+        .toggle-dot {
+            background-color: #166534;
+        }
+        .toggle-active .toggle-bg {
+            background-color: #166534;
+            border-color: #22c55e;
+        }
+        .toggle-active .toggle-dot {
+            background-color: #4ade80;
+            transform: translateX(100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 flex flex-col items-center">
+
+    <!-- Wrapper -->
+    <div class="w-full max-w-6xl border border-green-900 shadow-[0_0_15px_rgba(22,101,52,0.5)] flex flex-col">
+        
+        <!-- Header -->
+        <div class="border-b border-green-900 px-4 py-3 flex justify-between items-center bg-black">
+            <button class="px-3 py-1 text-sm font-bold bg-green-900 text-black border border-green-500 hover:bg-green-800 transition-colors uppercase tracking-widest shadow-[0_0_8px_rgba(34,197,94,0.4)]">
+                INFRA-TCT
+            </button>
+            <div class="text-center">
+                <h1 class="text-2xl font-bold uppercase tracking-widest glitch-text">ISP CONFIG GENERATOR</h1>
+                <p class="text-green-800 text-xs mt-1">> Initializing system... Ready.</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <button class="text-xs border border-green-800 px-3 py-1 hover:bg-green-900/40 transition-colors tracking-widest uppercase">
+                    ADMIN
+                </button>
+                <button class="text-xs border border-green-800 px-3 py-1 hover:bg-green-900/40 transition-colors tracking-widest text-red-500 border-red-900 hover:bg-red-900/20 uppercase">
+                    EXIT
+                </button>
+                <div class="text-xs animate-pulse font-bold tracking-widest">● ONLINE</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex flex-col md:flex-row p-4 gap-6">
+            
+            <!-- LEFT COLUMN -->
+            <div class="flex-1 space-y-4">
+                
+                <div>
+                    <label class="block text-sm font-bold mb-2 uppercase tracking-widest glitch-text">> > CUSTOMER INFO BLOCK</label>
+                    <textarea id="customerTicket" rows="8" class="input-field w-full p-3 font-mono text-sm leading-relaxed" placeholder="Paste customer ticket here...&#10;ID: 114216&#10;Name: Nev Sophanny&#10;Address: Borey Chip Mong 50M #03 St.P08&#10;Phone: 85599999343&#10;Type: PPPoE&#10;Package: TODAY Fiber Link-Light 70Mbps&#10;TD0350-TCT"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold mb-2 uppercase tracking-widest glitch-text">> > SN</label>
+                    <input type="text" id="snInput" class="input-field w-full p-3 font-mono text-sm" placeholder="4857544327C2CFA4">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold mb-2 uppercase tracking-widest glitch-text">> > SERVICE TYPE</label>
+                    <select id="serviceType" class="input-field w-full p-3 font-mono text-sm">
+                        <option value="2422">2422 (PPPoE)</option>
+                        <option value="2423">2423 (Static IP)</option>
+                        <option value="67">67 (@fiberlink / @todayhome)</option>
+                        <option value="63">63 (@todayfiber)</option>
+                        <option value="64">64 (@sf)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold mb-2 uppercase tracking-widest glitch-text">> > GPON / EPON INTERFACE</label>
+                    <div class="flex gap-2">
+                        <select id="interfacePrefix" class="input-field p-3 font-mono text-sm w-1/3">
+                            <option value="EPON0/1:">EPON0/1:</option>
+                            <option value="GPON0/1:">GPON0/1:</option>
+                        </select>
+                        <input type="text" id="onuId" class="input-field w-2/3 p-3 font-mono text-sm" placeholder="ONU ID (e.g. 36)">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between border border-green-900 p-3">
+                    <label class="text-sm font-bold uppercase tracking-widest glitch-text">> > IPCAM_MODE</label>
+                    <div class="toggle-container cursor-pointer w-12 h-6 rounded-full toggle-bg relative transition-colors duration-300" onclick="this.classList.toggle('toggle-active')">
+                        <div class="toggle-dot absolute top-0.5 left-0.5 w-5 h-5 rounded-full transition-transform duration-300"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between border border-green-900 p-3">
+                    <label class="text-sm font-bold uppercase tracking-widest glitch-text">> > DNS_MODE</label>
+                    <div class="toggle-container cursor-pointer w-12 h-6 rounded-full toggle-bg relative transition-colors duration-300" onclick="this.classList.toggle('toggle-active')">
+                        <div class="toggle-dot absolute top-0.5 left-0.5 w-5 h-5 rounded-full transition-transform duration-300"></div>
+                    </div>
+                </div>
+
+                <button onclick="executeGeneration()" class="w-full py-4 mt-2 font-bold uppercase tracking-widest text-black bg-green-500 hover:bg-green-400 transition-all shadow-[0_0_10px_rgba(34,197,94,0.6)] hover:shadow-[0_0_20px_rgba(74,222,128,0.8)] border border-green-300">
+                    [ EXECUTE_GENERATION ]
+                </button>
+
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="flex-1 space-y-6">
+                
+                <!-- OUTPUT 1 -->
+                <div class="border border-green-900 relative p-4 bg-green-950/20 shadow-inner">
+                    <div class="flex justify-between items-center mb-4 border-b border-green-900 pb-2">
+                        <label class="text-sm font-bold uppercase tracking-widest glitch-text">> > OUTPUT_OUR_TEAM</label>
+                        <button onclick="copyOutput('output1', this)" class="text-xs px-3 py-1 border border-green-700 hover:bg-green-900 text-green-400 transition-colors uppercase tracking-widest flex items-center gap-2">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            CPY
+                        </button>
+                    </div>
+                    <textarea id="output1" rows="9" readonly class="w-full bg-transparent border-none text-green-400 font-mono text-sm resize-none focus:outline-none placeholder-green-900/50 leading-relaxed" placeholder="Awaiting execution..."></textarea>
+                </div>
+
+                <!-- OUTPUT 2 -->
+                <div class="border border-green-900 relative p-4 bg-green-950/20 shadow-inner">
+                    <div class="flex justify-between items-center mb-4 border-b border-green-900 pb-2">
+                        <label class="text-sm font-bold uppercase tracking-widest glitch-text">> > TO_TCT_GROUP</label>
+                        <button onclick="copyOutput('output2', this)" class="text-xs px-3 py-1 border border-green-700 hover:bg-green-900 text-green-400 transition-colors uppercase tracking-widest flex items-center gap-2">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            CPY
+                        </button>
+                    </div>
+                    <textarea id="output2" rows="8" readonly class="w-full bg-transparent border-none text-green-400 font-mono text-sm resize-none focus:outline-none placeholder-green-900/50 leading-relaxed" placeholder="Awaiting execution..."></textarea>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-green-500 text-black px-4 py-2 font-bold uppercase tracking-widest transform translate-y-10 opacity-0 transition-all duration-300 shadow-[0_0_10px_rgba(34,197,94,0.6)]">
+        DATA COPIED TO CLIPBOARD
+    </div>
+
+    <script>
+        function copyOutput(elementId, btnElement) {
+            const textarea = document.getElementById(elementId);
+            textarea.select();
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+            
+            // Visual feedback on button
+            const originalText = btnElement.innerHTML;
+            btnElement.innerHTML = 'COPIED';
+            btnElement.classList.add('bg-green-800', 'text-white');
+            
+            // Show toast
+            const toast = document.getElementById('toast');
+            toast.classList.remove('translate-y-10', 'opacity-0');
+            
+            setTimeout(() => {
+                btnElement.innerHTML = originalText;
+                btnElement.classList.remove('bg-green-800', 'text-white');
+                toast.classList.add('translate-y-10', 'opacity-0');
+            }, 2000);
+        }
+
+        function extractData(text) {
+            // Updated extraction rules based on realistic patterns
+            const idMatch = text.match(/ID:\s*(\w+)/i);
+            const nameMatch = text.match(/Name:\s*([^\n]+)/i);
+            const phoneMatch = text.match(/Phone:\s*(\d+)/i);
+            const packageMatch = text.match(/Package:\s*([^\n]+)/i);
+            
+            // Order number format: TDxxxx
+            const orderMatch = text.match(/(TD\d{4})/i);
+
+            // Optional: Also catch the full TDxxxx-TCT if needed, but we just need TDxxxx for Output 2
+            const fullOrderMatch = text.match(/(TD\d{4}-TCT)/i);
+
+            return {
+                id: idMatch ? idMatch[1].trim() : "UNKNOWN",
+                name: nameMatch ? nameMatch[1].trim() : "UNKNOWN",
+                phone: phoneMatch ? phoneMatch[1].trim() : "UNKNOWN",
+                pkg: packageMatch ? packageMatch[1].trim() : "UNKNOWN",
+                orderFull: fullOrderMatch ? fullOrderMatch[1].trim() : null,
+                orderNum: orderMatch ? orderMatch[1].trim() : "UNKNOWN"
+            };
+        }
+
+        function executeGeneration() {
+            const ticketText = document.getElementById('customerTicket').value;
+            const sn = document.getElementById('snInput').value.trim();
+            const serviceType = document.getElementById('serviceType').value;
+
+            if (!ticketText) {
+                alert("Please paste the customer ticket info first.");
+                return;
+            }
+            if (!sn) {
+                alert("Please enter the SN.");
+                return;
+            }
+
+            const data = extractData(ticketText);
+            
+            // Process Username: last 8 chars of SN + "@fiberlink"
+            const last8 = sn.length >= 8 ? sn.slice(-8) : sn;
+            const username = `${last8}@fiberlink`;
+            
+            // Process Password: Phone number, replacing 855 with 0 if it exists
+            let password = data.phone;
+            if (password.startsWith('855')) {
+                password = '0' + password.slice(3);
+            }
+
+            // Fallback for orderFull if not found in text but orderNum is found
+            const bottomTag = data.orderFull ? data.orderFull : (data.orderNum !== "UNKNOWN" ? `${data.orderNum}-TCT` : "");
+
+            // OUTPUT 1 FORMAT
+            const output1 = `Done Bong. Please help test!\n\nID: ${data.id}\nName: ${data.name}\nUsername: ${username}\nPassword: ${password}\n\n${bottomTag}`;
+
+            // OUTPUT 2 FORMAT
+            const output2 = `Dear bong, please active this customer new install\n\nOrder : ${data.orderNum}\nVLAN : ${serviceType}\nMode : Bridge\n\nSN : ${sn}`;
+
+            document.getElementById('output1').value = output1;
+            document.getElementById('output2').value = output2;
+        }
+    </script>
+</body>
+</html>
