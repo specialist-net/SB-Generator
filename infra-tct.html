@@ -52,6 +52,12 @@
             transform: translateY(0);
             opacity: 1;
         }
+
+        textarea {
+            min-height: 120px;
+            resize: none;
+            overflow: hidden;
+        }
     </style>
 </head>
 
@@ -270,6 +276,19 @@
     </div>
 
     <script>
+        // Auto resize function
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const textareas = document.querySelectorAll('textarea');
+            textareas.forEach(ta => {
+                ta.addEventListener('input', () => autoResize(ta));
+            });
+        });
+
         // Copy function using new visual feedback pattern
         function copyOutput(elementId, btnElement) {
             const textarea = document.getElementById(elementId);
@@ -356,6 +375,9 @@
 
             document.getElementById('output1').value = output1;
             document.getElementById('output2').value = output2;
+            
+            autoResize(document.getElementById('output1'));
+            autoResize(document.getElementById('output2'));
         }
     </script>
 </body>
