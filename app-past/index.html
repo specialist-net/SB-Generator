@@ -233,7 +233,7 @@
                 </div>
 
                 <!-- DNS Toggle -->
-                <div class="flex items-center justify-between py-1">
+                <div class="flex items-center justify-between py-1 border-b border-transparent dark:border-green-900 pb-2">
                     <label class="text-xs font-bold uppercase tracking-wider
                         text-slate-700 dark:text-green-700 cursor-pointer">
                         <span class="dark:hidden">DNS Mode</span>
@@ -245,6 +245,49 @@
                         <span id="dnsDot" class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full transition-all duration-300
                             bg-white shadow dark:bg-green-900 dark:rounded-none"></span>
                     </button>
+                </div>
+                
+                <!-- SPEED CALCULATOR TOGGLE -->
+                <div class="flex items-center justify-between py-1 pt-2">
+                    <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-green-700 cursor-pointer">
+                        <span class="dark:hidden">Speed Calculator</span>
+                        <span class="hidden dark:inline">>> SPEED_CALCULATOR</span>
+                    </label>
+                    <button id="speedToggle" type="button" class="relative w-12 h-6 rounded-full transition-colors duration-300 bg-slate-300 dark:bg-slate-800 dark:border dark:border-green-900 dark:rounded-none" onclick="toggleSpeed()">
+                        <span id="speedDot" class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full transition-all duration-300 bg-white shadow dark:bg-green-900 dark:rounded-none"></span>
+                    </button>
+                </div>
+
+                <!-- SPEED CALCULATOR FIELDS (HIDDEN BY DEFAULT) -->
+                <div id="speedCalculatorFields" class="hidden mb-2">
+                    <input type="number" id="speedInput"
+                        class="w-full px-3 py-2 text-sm transition-all mb-2
+                        bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:ring-blue-500 focus:border-blue-500
+                        dark:bg-black dark:border-green-800 dark:rounded-none dark:font-mono dark:text-green-400 dark:placeholder-green-900 dark:focus:border-green-500 dark:focus:ring-green-500"
+                        placeholder="Speed (Mbps) e.g. 50"
+                        oninput="calculateSpeed()">
+                    
+                    <div class="p-2 relative group transition-all
+                        bg-slate-50 rounded-lg border border-slate-200
+                        dark:bg-black dark:rounded-none dark:border-green-800 dark:shadow-inner dark:shadow-green-900/20 mt-2">
+                        <div class="flex justify-between items-center mb-1 pb-1
+                            border-b border-transparent dark:border-green-900">
+                            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-green-700">
+                                <span class="dark:hidden">Speed Output</span>
+                                <span class="hidden dark:inline">>> SPEED_OUTPUT</span>
+                            </label>
+                            <button onclick="copySpeedOutput(this)"
+                                class="text-[10px] px-2 py-0.5 transition-colors flex items-center gap-1 font-mono uppercase
+                                bg-white hover:bg-slate-100 text-slate-600 border border-slate-300 rounded
+                                dark:bg-slate-900 dark:hover:bg-green-900 dark:text-green-500 dark:border-green-700 dark:rounded-none">
+                                <span class="dark:hidden">Copy</span>
+                                <span class="hidden dark:inline">CPY</span>
+                            </button>
+                        </div>
+                        <input type="text" id="speedOutput" readonly onclick="this.select();" 
+                            class="w-full text-xs font-mono bg-transparent border-0 focus:ring-0 p-0 text-slate-800 dark:text-green-300"
+                            placeholder="Awaiting input...">
+                    </div>
                 </div>
                 <button id="generateBtn"
                     class="w-full font-bold py-2 transition-all shadow-sm uppercase tracking-wider text-sm

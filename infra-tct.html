@@ -155,12 +155,19 @@
                     </select>
                 </div>
 
-                <!-- SPEED CALCULATOR -->
-                <div class="pt-2 border-t border-slate-200 dark:border-green-900 mt-2">
-                    <label class="block text-xs font-bold mb-1 uppercase tracking-wider text-slate-700 dark:text-green-700">
+                <!-- SPEED CALCULATOR TOGGLE -->
+                <div class="flex items-center justify-between py-1 border-t border-slate-200 dark:border-green-900 mt-2 pt-2">
+                    <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-green-700 cursor-pointer">
                         <span class="dark:hidden">Speed Calculator</span>
                         <span class="hidden dark:inline">>> SPEED_CALCULATOR</span>
                     </label>
+                    <button id="speedToggle" type="button" class="relative w-12 h-6 rounded-full transition-colors duration-300 bg-slate-300 dark:bg-slate-800 dark:border dark:border-green-900 dark:rounded-none" onclick="toggleSpeed()">
+                        <span id="speedDot" class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full transition-all duration-300 bg-white shadow dark:bg-green-900 dark:rounded-none"></span>
+                    </button>
+                </div>
+
+                <!-- SPEED CALCULATOR FIELDS (HIDDEN BY DEFAULT) -->
+                <div id="speedCalculatorFields" class="hidden">
                     <input type="number" id="speedInput"
                         class="w-full px-3 py-2 text-sm transition-all mb-2
                         bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:ring-blue-500 focus:border-blue-500
@@ -357,6 +364,38 @@
             }, 2000);
         }
 
+        // Speed Toggle Logic
+        let speedEnabled = false;
+
+        function toggleSpeed() {
+            speedEnabled = !speedEnabled;
+            const fields = document.getElementById('speedCalculatorFields');
+            const toggleBtn = document.getElementById('speedToggle');
+            const dot = document.getElementById('speedDot');
+
+            if (speedEnabled) {
+                // Show fields
+                fields.classList.remove('hidden');
+                // Toggle ON style (matches blue-500/green-700 visually)
+                toggleBtn.classList.replace('dark:bg-slate-800', 'dark:bg-green-700');
+                toggleBtn.classList.replace('bg-slate-300', 'bg-blue-600');
+                dot.style.transform = 'translateX(24px)';
+                dot.classList.replace('dark:bg-green-900', 'dark:bg-green-400');
+            } else {
+                // Hide fields
+                fields.classList.add('hidden');
+                // Toggle OFF style
+                toggleBtn.classList.replace('dark:bg-green-700', 'dark:bg-slate-800');
+                toggleBtn.classList.replace('bg-blue-600', 'bg-slate-300');
+                dot.style.transform = 'translateX(0)';
+                dot.classList.replace('dark:bg-green-400', 'dark:bg-green-900');
+                
+                // Clear state to prevent ghost data
+                document.getElementById('speedInput').value = '';
+                document.getElementById('speedOutput').value = '';
+            }
+        }
+
         // Speed calculation logic
         function calculateSpeed() {
             const speedInput = document.getElementById('speedInput').value;
@@ -376,20 +415,7 @@
             outputField.value = `${speed} police rate ${policeRate} burst ${burst} peak-burst ${peakBurst}`;
         }
 
-        // Dummy toggle UI function to support buttons matching app-past/index.html layout identicals
-        function toggleBtnVisual(btn) {
-            const dot = btn.querySelector('span');
-            if(btn.classList.contains('dark:bg-slate-800')) {
-                btn.classList.replace('dark:bg-slate-800', 'dark:bg-green-700');
-                btn.classList.replace('bg-slate-300', 'bg-blue-500');
-                dot.style.transform = 'translateX(24px)';
-            } else {
-                btn.classList.replace('dark:bg-green-700', 'dark:bg-slate-800');
-                btn.classList.replace('bg-blue-500', 'bg-slate-300');
-                dot.style.transform = 'translateX(0)';
-            }
-        }
-
+        // We only use actual toggle logic for Speed here, so removing toggleBtnVisual which was a dummy
         function extractData(text) {
             const idMatch = text.match(/ID:\s*(\w+)/i);
             const nameMatch = text.match(/Name:\s*([^\n]+)/i);

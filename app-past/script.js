@@ -525,3 +525,70 @@ function toggleInfraTct() {
         `;
     }
 }
+
+// Speed Toggle Logic
+let speedEnabled = false;
+
+function toggleSpeed() {
+    speedEnabled = !speedEnabled;
+    const fields = document.getElementById('speedCalculatorFields');
+    const toggleBtn = document.getElementById('speedToggle');
+    const dot = document.getElementById('speedDot');
+
+    if (speedEnabled) {
+        // Show fields
+        fields.classList.remove('hidden');
+        // Toggle ON style
+        toggleBtn.classList.replace('dark:bg-slate-800', 'dark:bg-green-700');
+        toggleBtn.classList.replace('bg-slate-300', 'bg-blue-600');
+        dot.style.transform = 'translateX(24px)';
+        dot.classList.replace('dark:bg-green-900', 'dark:bg-green-400');
+    } else {
+        // Hide fields
+        fields.classList.add('hidden');
+        // Toggle OFF style
+        toggleBtn.classList.replace('dark:bg-green-700', 'dark:bg-slate-800');
+        toggleBtn.classList.replace('bg-blue-600', 'bg-slate-300');
+        dot.style.transform = 'translateX(0)';
+        dot.classList.replace('dark:bg-green-400', 'dark:bg-green-900');
+        
+        // Clear state to prevent ghost data
+        document.getElementById('speedInput').value = '';
+        document.getElementById('speedOutput').value = '';
+    }
+}
+
+function calculateSpeed() {
+    const speedInput = document.getElementById('speedInput').value;
+    const outputField = document.getElementById('speedOutput');
+    
+    if (!speedInput || speedInput <= 0) {
+        outputField.value = '';
+        return;
+    }
+
+    const speed = parseFloat(speedInput);
+    const policeRate = speed * 1048576;
+    const burst = Math.round(policeRate * 0.10625);
+    const peakBurst = burst;
+
+    // Strict single line formatting requirement
+    outputField.value = `${speed} police rate ${policeRate} burst ${burst} peak-burst ${peakBurst}`;
+}
+
+// Dedicated copy function for the inline text input of the speed calculator (Main app style)
+function copySpeedOutput(btnElement) {
+    const inputField = document.getElementById('speedOutput');
+    inputField.select();
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
+    
+    // Visual Feedback main app style
+    const isDark = document.documentElement.classList.contains('dark');
+    btnElement.classList.add('text-green-500', 'border-green-500');
+    if (!isDark) btnElement.classList.add('text-green-600', 'border-green-600');
+
+    setTimeout(() => {
+        btnElement.classList.remove('text-green-500', 'border-green-500', 'text-green-600', 'border-green-600');
+    }, 2000);
+}
