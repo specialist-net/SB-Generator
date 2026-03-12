@@ -26,29 +26,50 @@
             --text-muted: #888888;
             --input-bg: #000000;
             --input-border: #333333;
+            --output-bg: #000000;
             --copy-bg: rgba(0, 255, 156, 0.1);
             --copy-text: #00ff9c;
+            --copy-border: #00ff9c;
             --copy-radius: 4px;
+            --copy-hover-bg: rgba(0, 255, 156, 0.2);
+            --copy-hover-text: #00ff9c;
+            --copy-hover-border: #00ff9c;
             --panel-shadow: 0 4px 6px rgba(0,0,0,0.5);
             --btn-hover-bg: #00ff9c;
             --btn-hover-text: #000000;
+            --accent-color: #00ff9c;
+            --focus-ring: rgba(0,255,156,0.15);
+            --focus-border: #00ff9c;
+            --panel-radius: 8px;
+            --toggle-off: #888888;
+            --toggle-on: #00ff9c;
         }
 
         :root.light-theme {
-            --bg-color: #f5f7fb;
+            --bg-color: #eef2f6;
             --panel-bg: #ffffff;
             --border-color: #d0d7de;
             --text-color: #1f2328;
             --text-muted: #57606a;
-            --input-bg: #ffffff;
+            --input-bg: #f6f8fa;
             --input-border: #d0d7de;
             --output-bg: #f6f8fa;
             --copy-bg: #00a86b;
             --copy-text: #ffffff;
+            --copy-border: #00a86b;
             --copy-radius: 6px;
-            --panel-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            --copy-hover-bg: #00925c;
+            --copy-hover-text: #ffffff;
+            --copy-hover-border: #00925c;
+            --panel-shadow: 0 2px 8px rgba(0,0,0,0.05);
             --btn-hover-bg: #ffffff;
             --btn-hover-text: #00a86b;
+            --accent-color: #00a86b;
+            --focus-ring: rgba(0,168,107,0.15);
+            --focus-border: #00a86b;
+            --panel-radius: 10px;
+            --toggle-off: #cbd5e1;
+            --toggle-on: #00a86b;
         }
 
         /* Core Application Logic */
@@ -79,10 +100,10 @@
         .noc-panel {
             background-color: var(--panel-bg);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: var(--panel-radius);
             padding: 16px;
             box-shadow: var(--panel-shadow);
-            transition: background-color 0.3s, border-color 0.3s;
+            transition: background-color 0.3s, border-color 0.3s, border-radius 0.3s;
         }
         
         .noc-input {
@@ -94,9 +115,9 @@
         }
         
         .noc-input:focus {
-            border-color: var(--border-color);
+            border-color: var(--focus-border);
             outline: none;
-            box-shadow: 0 0 0 1px var(--border-color);
+            box-shadow: 0 0 0 2px var(--focus-ring);
         }
 
         .noc-output-area {
@@ -108,9 +129,9 @@
         }
         
         .noc-output-area:focus {
-            border-color: var(--border-color);
+            border-color: var(--focus-border);
             outline: none;
-            box-shadow: 0 0 0 1px var(--border-color);
+            box-shadow: 0 0 0 2px var(--focus-ring);
         }
         
         .noc-label {
@@ -142,13 +163,15 @@
         .copy-btn {
             background-color: var(--copy-bg);
             color: var(--copy-text);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--copy-border);
             border-radius: var(--copy-radius);
+            font-weight: 600;
             transition: all 0.2s;
         }
         .copy-btn:hover {
-            opacity: 0.8;
-            border-color: var(--copy-text);
+            background-color: var(--copy-hover-bg);
+            color: var(--copy-hover-text);
+            border-color: var(--copy-hover-border);
         }
 
         .text-var-muted { color: var(--text-muted); }
@@ -162,6 +185,7 @@
         }
 
         .text-var-main { color: var(--text-color); }
+        .text-var-accent { color: var(--accent-color); fill: var(--accent-color); }
 
         /* Toast Animation */
         #toast {
@@ -226,7 +250,7 @@
 
         <!-- LEFT PANEL: CUSTOMER INFO -->
         <section class="noc-panel flex flex-col h-full">
-            <h2 class="font-bold mb-4 flex items-center gap-2 border-b border-var-color pb-2 text-var-main">
+            <h2 class="font-bold mb-4 flex items-center gap-2 border-b border-var-color pb-2 text-var-accent">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                 >> CUSTOMER INFO
             </h2>
@@ -262,7 +286,7 @@
 
         <!-- CENTER PANEL: NETWORK CONFIG -->
         <section class="noc-panel flex flex-col h-full">
-            <h2 class="font-bold mb-4 flex items-center gap-2 border-b border-var-color pb-2 text-var-main">
+            <h2 class="font-bold mb-4 flex items-center gap-2 border-b border-var-color pb-2 text-var-accent">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 >> NETWORK CONFIGURATION
             </h2>
@@ -306,7 +330,7 @@
                     <div class="flex items-center justify-between">
                         <label class="noc-label !mb-0 cursor-pointer" onclick="toggleIpcam()">>> IPCAM_MODE</label>
                         <button id="ipcamToggle" type="button" class="relative w-10 h-5 rounded-full transition-colors duration-300 border border-var-color" style="background-color: var(--input-border)" onclick="toggleIpcam()">
-                            <span id="ipcamDot" class="absolute top-[1px] left-[2px] w-4 h-4 rounded-full transition-all duration-300" style="background-color: var(--text-muted)"></span>
+                            <span id="ipcamDot" class="absolute top-[1px] left-[2px] w-4 h-4 rounded-full transition-all duration-300" style="background-color: var(--toggle-off)"></span>
                         </button>
                     </div>
                     <div id="ipcamFields" class="hidden grid grid-cols-2 gap-2 noc-inner-box p-2 rounded">
@@ -324,7 +348,7 @@
                     <div class="flex items-center justify-between">
                         <label class="noc-label !mb-0 cursor-pointer" onclick="toggleDns()">>> DNS_MODE</label>
                         <button id="dnsToggle" type="button" class="relative w-10 h-5 rounded-full transition-colors duration-300 border border-var-color" style="background-color: var(--input-border)" onclick="toggleDns()">
-                            <span id="dnsDot" class="absolute top-[1px] left-[2px] w-4 h-4 rounded-full transition-all duration-300" style="background-color: var(--text-muted)"></span>
+                            <span id="dnsDot" class="absolute top-[1px] left-[2px] w-4 h-4 rounded-full transition-all duration-300" style="background-color: var(--toggle-off)"></span>
                         </button>
                     </div>
 
@@ -332,7 +356,7 @@
                     <div class="flex items-center justify-between">
                         <label class="noc-label !mb-0 cursor-pointer" onclick="toggleSpeed()">>> SPEED_CALCULATOR</label>
                         <button id="speedToggle" type="button" class="relative w-10 h-5 rounded-full transition-colors duration-300 border border-var-color" style="background-color: var(--input-border)" onclick="toggleSpeed()">
-                            <span id="speedDot" class="absolute top-[1px] left-[2px] w-4 h-4 rounded-full transition-all duration-300" style="background-color: var(--text-muted)"></span>
+                            <span id="speedDot" class="absolute top-[1px] left-[2px] w-4 h-4 rounded-full transition-all duration-300" style="background-color: var(--toggle-off)"></span>
                         </button>
                     </div>
                     <div id="speedCalculatorFields" class="hidden noc-inner-box p-2 rounded">

@@ -326,11 +326,11 @@ function toggleIpcam() {
     if(ipcamEnabled) {
         fields.classList.remove('hidden');
         dot.style.transform = 'translateX(20px)';
-        dot.classList.replace('bg-gray-500', 'bg-noc-green');
+        dot.style.backgroundColor = 'var(--toggle-on)';
     } else {
         fields.classList.add('hidden');
         dot.style.transform = 'translateX(0px)';
-        dot.classList.replace('bg-noc-green', 'bg-gray-500');
+        dot.style.backgroundColor = 'var(--toggle-off)';
         document.getElementById('ipInput').value = '';
         document.getElementById('portInput').value = '';
     }
@@ -343,10 +343,10 @@ function toggleDns() {
     
     if(dnsEnabled) {
         dot.style.transform = 'translateX(20px)';
-        dot.classList.replace('bg-gray-500', 'bg-noc-green');
+        dot.style.backgroundColor = 'var(--toggle-on)';
     } else {
         dot.style.transform = 'translateX(0px)';
-        dot.classList.replace('bg-noc-green', 'bg-gray-500');
+        dot.style.backgroundColor = 'var(--toggle-off)';
     }
 }
 
@@ -359,11 +359,11 @@ function toggleSpeed() {
     if(speedEnabled) {
         fields.classList.remove('hidden');
         dot.style.transform = 'translateX(20px)';
-        dot.classList.replace('bg-gray-500', 'bg-noc-green');
+        dot.style.backgroundColor = 'var(--toggle-on)';
     } else {
         fields.classList.add('hidden');
         dot.style.transform = 'translateX(0px)';
-        dot.classList.replace('bg-noc-green', 'bg-gray-500');
+        dot.style.backgroundColor = 'var(--toggle-off)';
         document.getElementById('speedInput').value = '';
         document.getElementById('speedOutput').value = '';
     }
