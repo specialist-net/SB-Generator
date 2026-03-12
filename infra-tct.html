@@ -120,18 +120,32 @@
 
                 <div>
                     <label class="block text-xs font-bold mb-1 uppercase tracking-wider text-slate-700 dark:text-green-700">
-                        <span class="dark:hidden">Service Type</span>
-                        <span class="hidden dark:inline">>> Service Type</span>
+                        <span class="dark:hidden">Connection Type</span>
+                        <span class="hidden dark:inline">>> Connection Type</span>
                     </label>
-                    <select id="serviceType"
+                    <select id="connectionType"
                         class="w-full px-3 py-2 text-sm transition-all
                         bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:ring-blue-500 focus:border-blue-500
                         dark:bg-black dark:border-green-800 dark:rounded-none dark:font-mono dark:text-green-400 dark:focus:border-green-500">
-                        <option value="2422">2422 (PPPoE)</option>
-                        <option value="2423">2423 (Static IP)</option>
-                        <option value="67">67 (@fiberlink / @todayhome)</option>
-                        <option value="63">63 (@todayfiber)</option>
-                        <option value="64">64 (@sf)</option>
+                        <option value="2422">PPPoE</option>
+                        <option value="2423">Static IP</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold mb-1 uppercase tracking-wider text-slate-700 dark:text-green-700">
+                        <span class="dark:hidden">Package Type</span>
+                        <span class="hidden dark:inline">>> Package Type</span>
+                    </label>
+                    <select id="packageType"
+                        class="w-full px-3 py-2 text-sm transition-all
+                        bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:ring-blue-500 focus:border-blue-500
+                        dark:bg-black dark:border-green-800 dark:rounded-none dark:font-mono dark:text-green-400 dark:focus:border-green-500">
+                        <option value="@fiberlink">@fiberlink</option>
+                        <option value="@todayhome">@todayhome</option>
+                        <option value="@todayfiber">@todayfiber</option>
+                        <option value="@todayplus">@todayplus</option>
+                        <option value="@sf">@sf</option>
                     </select>
                 </div>
 
@@ -307,7 +321,8 @@
         function executeGeneration() {
             const ticketText = document.getElementById('customerTicket').value;
             const sn = document.getElementById('snInput').value.trim();
-            const serviceType = document.getElementById('serviceType').value;
+            const connectionType = document.getElementById('connectionType').value;
+            const packageType = document.getElementById('packageType').value;
 
             if (!ticketText) {
                 alert("Please paste the customer ticket info first.");
@@ -320,9 +335,9 @@
 
             const data = extractData(ticketText);
             
-            // Process Username: last 8 chars of SN + "@fiberlink"
+            // Process Username: last 8 chars of SN + packageType
             const last8 = sn.length >= 8 ? sn.slice(-8) : sn;
-            const username = `${last8}@fiberlink`;
+            const username = `${last8}${packageType}`;
             
             // Process Password: Phone number, replacing 855 with 0 if it exists
             let password = data.phone;
@@ -337,7 +352,7 @@
             const output1 = `Done Bong. Please help test!\n\nID: ${data.id}\nName: ${data.name}\nUsername: ${username}\nPassword: ${password}\n\n${bottomTag}`;
 
             // OUTPUT 2 FORMAT
-            const output2 = `Dear bong, please active this customer new install\n\nOrder : ${data.orderNum}\nVLAN : ${serviceType}\nMode : Bridge\n\nSN : ${sn}`;
+            const output2 = `Dear bong, please active this customer new install\n\nOrder : ${data.orderNum}\nVLAN : ${connectionType}\nMode : Bridge\n\nSN : ${sn}`;
 
             document.getElementById('output1').value = output1;
             document.getElementById('output2').value = output2;
