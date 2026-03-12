@@ -35,17 +35,18 @@
         }
 
         :root.light-theme {
-            --bg-color: #f6f8fa;
+            --bg-color: #f5f7fb;
             --panel-bg: #ffffff;
             --border-color: #d0d7de;
             --text-color: #1f2328;
-            --text-muted: #656d76;
-            --input-bg: #f6f8fa;
+            --text-muted: #57606a;
+            --input-bg: #ffffff;
             --input-border: #d0d7de;
+            --output-bg: #f6f8fa;
             --copy-bg: #00a86b;
             --copy-text: #ffffff;
             --copy-radius: 6px;
-            --panel-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --panel-shadow: 0 2px 6px rgba(0,0,0,0.05);
             --btn-hover-bg: #ffffff;
             --btn-hover-text: #00a86b;
         }
@@ -93,6 +94,20 @@
         }
         
         .noc-input:focus {
+            border-color: var(--border-color);
+            outline: none;
+            box-shadow: 0 0 0 1px var(--border-color);
+        }
+
+        .noc-output-area {
+            background-color: var(--output-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-color);
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .noc-output-area:focus {
             border-color: var(--border-color);
             outline: none;
             box-shadow: 0 0 0 1px var(--border-color);
@@ -258,14 +273,7 @@
                     <input type="text" id="macInput" class="noc-input w-full p-2 text-sm uppercase" placeholder="7C:DA:04:AB:CD:EF">
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="noc-label">Connection Type</label>
-                        <select id="connectionType" class="noc-input w-full p-2 text-sm">
-                            <option value="PPPoE">PPPoE (2422)</option>
-                            <option value="Static IP">Static IP (2423)</option>
-                        </select>
-                    </div>
+                <div class="grid grid-cols-1 gap-3">
                     <div>
                         <label class="noc-label">Package Type</label>
                         <select id="packageType" class="noc-input w-full p-2 text-sm">
@@ -280,12 +288,15 @@
 
                 <div>
                     <label class="noc-label">ONU Interface</label>
-                    <div class="flex gap-2">
+                    <div class="flex gap-2 items-center">
                         <select id="interfacePrefix" class="noc-input p-2 text-sm shrink-0" onchange="updateInterfaceInput()">
                             <option value="EPON0/1:" selected>EPON0/1:</option>
                             <option value="GPON0/1:">GPON0/1:</option>
                         </select>
                         <input type="text" id="interfaceInput" class="noc-input w-full p-2 text-sm" value="EPON0/1:" placeholder="EPON0/1:36">
+                        <button onclick="copyInterface()" class="copy-btn text-[10px] px-2 py-2 flex items-center gap-1 font-mono uppercase font-bold shrink-0">
+                            COPY
+                        </button>
                     </div>
                 </div>
 
@@ -344,7 +355,7 @@
                         COPY
                     </button>
                 </div>
-                <textarea id="output_userInfo" readonly onclick="this.select();" class="noc-input w-full flex-grow p-3 text-xs resize-none" placeholder="User Information will appear here..."></textarea>
+                <textarea id="output_userInfo" readonly onclick="this.select();" class="noc-output-area w-full flex-grow p-3 text-xs resize-none" placeholder="User Information will appear here..."></textarea>
             </div>
 
             <!-- Output 2 -->
@@ -355,18 +366,7 @@
                         COPY
                     </button>
                 </div>
-                <textarea id="output_commandOut" readonly onclick="this.select();" class="noc-input w-full flex-grow p-3 text-xs resize-none" placeholder="Command Lines will appear here..."></textarea>
-            </div>
-
-            <!-- Output 3 -->
-            <div class="flex flex-col h-[200px] shrink-0">
-                <div class="flex justify-between items-center mb-1">
-                    <label class="noc-label !mb-0">>> TO_TCT_GROUP</label>
-                    <button onclick="copyOutput('output_tctGroup', this)" class="copy-btn text-[10px] px-3 py-1 flex items-center gap-1 font-mono uppercase font-bold">
-                        COPY
-                    </button>
-                </div>
-                <textarea id="output_tctGroup" readonly onclick="this.select();" class="noc-input w-full flex-grow p-3 text-xs resize-none" placeholder="TCT Group format will appear here..."></textarea>
+                <textarea id="output_commandOut" readonly onclick="this.select();" class="noc-output-area w-full flex-grow p-3 text-xs resize-none" placeholder="Command Lines will appear here..."></textarea>
             </div>
             
         </section>

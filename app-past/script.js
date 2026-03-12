@@ -233,19 +233,10 @@ function generateConfig() {
         outCmd = `Please specify a valid ONU ID (e.g., EPON0/1:36)`;
     }
 
-    // ==========================================
-    // 3. GENERATE TCT GROUP
-    // ==========================================
-    let outTct = `Dear bong, please active this customer new install\n\n`;
-    outTct += `Order : ${data.project !== 'N/A' ? data.project : ''}\n`;
-    outTct += `VLAN : ${tctVlan}\n`;
-    outTct += `Mode : Bridge\n\n`;
-    outTct += `SN : ${macRaw.trim()}`;
-
     // Apply to UI
     document.getElementById('output_userInfo').value = outUser;
     document.getElementById('output_commandOut').value = outCmd;
-    document.getElementById('output_tctGroup').value = outTct;
+    copyInterface();
 }
 
 // Reset Logic
@@ -285,6 +276,21 @@ function copyOutput(elementId, btnElement) {
     const toast = document.getElementById('toast');
     toast.classList.add('toast-show');
     setTimeout(() => { toast.classList.remove('toast-show'); }, 2000);
+}
+
+function copyInterface() {
+    const interfaceInput = document.getElementById('interfaceInput');
+    if(interfaceInput && interfaceInput.value) {
+        navigator.clipboard.writeText(interfaceInput.value)
+            .then(() => {
+                const toast = document.getElementById('toast');
+                toast.classList.add('toast-show');
+                setTimeout(() => { toast.classList.remove('toast-show'); }, 2000);
+            })
+            .catch(err => {
+                console.error("Failed to copy text: ", err);
+            });
+    }
 }
 
 // Theme Toggle Logic

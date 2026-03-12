@@ -35,17 +35,18 @@
         }
 
         :root.light-theme {
-            --bg-color: #f6f8fa;
+            --bg-color: #f5f7fb;
             --panel-bg: #ffffff;
             --border-color: #d0d7de;
             --text-color: #1f2328;
-            --text-muted: #656d76;
-            --input-bg: #f6f8fa;
+            --text-muted: #57606a;
+            --input-bg: #ffffff;
             --input-border: #d0d7de;
+            --output-bg: #f6f8fa;
             --copy-bg: #00a86b;
             --copy-text: #ffffff;
             --copy-radius: 6px;
-            --panel-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --panel-shadow: 0 2px 6px rgba(0,0,0,0.05);
             --btn-hover-bg: #ffffff;
             --btn-hover-text: #00a86b;
         }
@@ -92,6 +93,20 @@
         }
         
         .noc-input:focus {
+            border-color: var(--border-color);
+            outline: none;
+            box-shadow: 0 0 0 1px var(--border-color);
+        }
+
+        .noc-output-area {
+            background-color: var(--output-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-color);
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .noc-output-area:focus {
             border-color: var(--border-color);
             outline: none;
             box-shadow: 0 0 0 1px var(--border-color);
@@ -269,12 +284,15 @@
 
                 <div>
                     <label class="noc-label">ONU Interface</label>
-                    <div class="flex gap-2">
-                        <select id="interfacePrefix" class="noc-input p-2 text-sm shrink-0" onchange="updateInterfaceInput()">
+                    <div class="flex gap-2 items-center">
+                        <select id="interfacePrefix" class="noc-input p-2 text-sm shrink-0">
                             <option value="EPON0/1:" selected>EPON0/1:</option>
                             <option value="GPON0/1:">GPON0/1:</option>
                         </select>
                         <input type="text" id="onuId" class="noc-input w-full p-2 text-sm" value="" placeholder="ONU ID (e.g. 36)">
+                        <button onclick="copyInterface()" class="copy-btn text-[10px] px-2 py-2 flex items-center gap-1 font-mono uppercase font-bold shrink-0">
+                            COPY
+                        </button>
                     </div>
                 </div>
 
@@ -318,28 +336,21 @@
             <div class="flex flex-col h-[200px] shrink-0">
                 <div class="flex justify-between items-center mb-1">
                     <label class="noc-label !mb-0">>> USER_INFO_OUTPUT</label>
-                    <button onclick="copyOutput('output1', this)" class="copy-btn text-[10px] px-3 py-1 flex items-center gap-1 font-mono uppercase font-bold">
+                    <button onclick="copyOutput('output_userInfo', this)" class="copy-btn text-[10px] px-3 py-1 flex items-center gap-1 font-mono uppercase font-bold">
                         COPY
                     </button>
                 </div>
-                <textarea id="output1" readonly onclick="this.select();" class="noc-input w-full flex-grow p-3 text-xs resize-none" placeholder="Our Team Format will appear here..."></textarea>
+                <textarea id="output_userInfo" readonly onclick="this.select();" class="noc-output-area w-full flex-grow p-3 text-xs resize-none" placeholder="User Information will appear here..."></textarea>
             </div>
 
             <div class="flex flex-col h-[200px] shrink-0">
                 <div class="flex justify-between items-center mb-1">
                     <label class="noc-label !mb-0">>> TO_TCT_GROUP</label>
-                    <button onclick="copyOutput('output2', this)" class="copy-btn text-[10px] px-3 py-1 flex items-center gap-1 font-mono uppercase font-bold">
+                    <button onclick="copyOutput('output_tctGroup', this)" class="copy-btn text-[10px] px-3 py-1 flex items-center gap-1 font-mono uppercase font-bold">
                         COPY
                     </button>
                 </div>
-                <textarea id="output2" readonly onclick="this.select();" class="noc-input w-full flex-grow p-3 text-xs resize-none" placeholder="TCT Group format will appear here..."></textarea>
-            </div>
-
-            <div class="flex flex-col h-[200px] shrink-0 opacity-50">
-                <div class="flex justify-between items-center mb-1">
-                    <label class="noc-label !mb-0">>> COMMAND_LINE_OUTPUT (HIDDEN IN TCT)</label>
-                </div>
-                <textarea readonly class="noc-input w-full flex-grow p-3 text-xs resize-none" style="background-color: var(--panel-bg); color: var(--text-muted)" placeholder="Use App-Main for ONU Commands"></textarea>
+                <textarea id="output_tctGroup" readonly onclick="this.select();" class="noc-output-area w-full flex-grow p-3 text-xs resize-none" placeholder="TCT Group format will appear here..."></textarea>
             </div>
 
         </section>
@@ -410,6 +421,23 @@
             const toast = document.getElementById('toast');
             toast.classList.add('toast-show');
             setTimeout(() => { toast.classList.remove('toast-show'); }, 2000);
+        }
+
+        function copyInterface() {
+            const prefix = document.getElementById('interfacePrefix').value;
+            const onuIdElem = document.getElementById('onuId');
+            if(onuIdElem && onuIdElem.value) {
+                const combined = prefix + onuIdElem.value;
+                navigator.clipboard.writeText(combined)
+                    .then(() => {
+                        const toast = document.getElementById('toast');
+                        toast.classList.add('toast-show');
+                        setTimeout(() => { toast.classList.remove('toast-show'); }, 2000);
+                    })
+                    .catch(err => {
+                        console.error("Failed to copy text: ", err);
+                    });
+            }
         }
 
         // Speed Toggle Logic
@@ -496,8 +524,8 @@
             const output1 = `Done Bong. Please help test!\n\nID: ${data.id}\nName: ${data.name}\nUsername: ${username}\nPassword: ${password}\n\n${bottomTag}`;
             const output2 = `Dear bong, please active this customer new install\n\nOrder : ${data.orderNum}\nVLAN : ${connectionType}\nMode : Bridge\n\nSN : ${sn}`;
 
-            document.getElementById('output1').value = output1;
-            document.getElementById('output2').value = output2;
+            document.getElementById('output_userInfo').value = output1;
+            document.getElementById('output_tctGroup').value = output2;
         }
 
         function resetAll() {
@@ -517,8 +545,8 @@
             document.getElementById('disp_phone').innerText = '--';
             document.getElementById('disp_order').innerText = '--';
 
-            document.getElementById('output1').value = '';
-            document.getElementById('output2').value = '';
+            document.getElementById('output_userInfo').value = '';
+            document.getElementById('output_tctGroup').value = '';
         }
     </script>
 </body>
