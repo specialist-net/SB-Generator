@@ -4,31 +4,41 @@ function generateGlanConfig(event) {
     if (event) event.preventDefault();
     console.log("GLAN Generate button clicked");
 
-    const id = document.getElementById('glanId').value.trim();
-    const name = document.getElementById('glanName').value.trim();
+    const infoRaw = document.getElementById('glanInfo').value.trim();
     const ip = document.getElementById('glanIp').value.trim();
     
-    // New Manual Overrides
-    const manualSubnet = document.getElementById('glanSubnet').value.trim();
-    const manualGw = document.getElementById('glanGw').value.trim();
-    const glanValue = document.getElementById('glanValue').value.trim();
-
-    if (!id || !name || !ip || !glanValue) {
-        alert("Please fill in ID, Name, IP, and GLAN Value.");
-        return;
+    // Parse ID and Name from combined info
+    // Match first sequence of digits as ID, rest as Name
+    const infoMatch = infoRaw.match(/^(\d+)\s*(.*)$/);
+    let id = "0000";
+    let name = "Unknown";
+    
+    if (infoMatch) {
+        id = infoMatch[1];
+        name = infoMatch[2].trim() || "Unknown";
+    } else if (infoRaw.length > 0) {
+        // Fallback: If no leading digits, use the whole string as name
+        name = infoRaw;
     }
 
+    // New Manual Overrides with Defaults
+    const manualSubnet = document.getElementById('glanSubnet').value.trim();
+    const manualGw = document.getElementById('glanGw').value.trim();
+    const glanValue = document.getElementById('glanValue').value.trim() || "306";
+
+    // Subnet Default
+    const subnet = manualSubnet || "255.255.255.128";
+
     // Process Gateway from IP if not manually provided
-    let gw = manualGw || "1.1.1.1";
-    if (!manualGw) {
+    let gw = manualGw;
+    if (!manualGw && ip) {
         const ipParts = ip.split('.');
         if (ipParts.length === 4) {
             gw = `${ipParts[0]}.${ipParts[1]}.${ipParts[2]}.1`;
         }
     }
-    
-    // Process Subnet if not manually provided
-    const subnet = manualSubnet || "255.255.255.128";
+    if (!gw) gw = "1.1.1.1"; // Hard fallback
+
 
     // Extract last word from name for config suffix
     const nameParts = name.split(/\s+/).filter(p => p.length > 0);
