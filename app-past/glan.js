@@ -79,10 +79,12 @@ function generateGlanConfig(event) {
     if (configEl) {
         configEl.value = configOut;
         configEl.innerText = configOut;
+        if (typeof autoExpand === "function") autoExpand(configEl);
     }
     if (groupEl) {
         groupEl.value = groupOut;
         groupEl.innerText = groupOut;
+        if (typeof autoExpand === "function") autoExpand(groupEl);
     }
 }
 
