@@ -7,18 +7,28 @@ function generateGlanConfig(event) {
     const id = document.getElementById('glanId').value.trim();
     const name = document.getElementById('glanName').value.trim();
     const ip = document.getElementById('glanIp').value.trim();
+    
+    // New Manual Overrides
+    const manualSubnet = document.getElementById('glanSubnet').value.trim();
+    const manualGw = document.getElementById('glanGw').value.trim();
+    const glanValue = document.getElementById('glanValue').value.trim();
 
-    if (!id || !name || !ip) {
-        alert("Please fill in all input fields (ID, Name, IP).");
+    if (!id || !name || !ip || !glanValue) {
+        alert("Please fill in ID, Name, IP, and GLAN Value.");
         return;
     }
 
-    // Process Gateway from IP
-    let gw = "1.1.1.1";
-    const ipParts = ip.split('.');
-    if (ipParts.length === 4) {
-        gw = `${ipParts[0]}.${ipParts[1]}.${ipParts[2]}.1`;
+    // Process Gateway from IP if not manually provided
+    let gw = manualGw || "1.1.1.1";
+    if (!manualGw) {
+        const ipParts = ip.split('.');
+        if (ipParts.length === 4) {
+            gw = `${ipParts[0]}.${ipParts[1]}.${ipParts[2]}.1`;
+        }
     }
+    
+    // Process Subnet if not manually provided
+    const subnet = manualSubnet || "255.255.255.128";
 
     // 1. SHOW AND CONFIG OUTPUT
     let configOut = `Show\n\n`;
@@ -32,7 +42,7 @@ function generateGlanConfig(event) {
     configOut += `class-map match-all cl-${id}-CAMMA\n`;
     configOut += `match access-group name acl-${id}-CAMMA\n`;
     configOut += `exit\n\n`;
-    configOut += `policy-map IP-Base-GLAN-306\n`;
+    configOut += `policy-map IP-Base-GLAN-${glanValue}\n`;
     configOut += `class cl-${id}-CAMMA\n`;
     configOut += `police rate 471859200\n`;
     configOut += `end`;
@@ -42,7 +52,7 @@ function generateGlanConfig(event) {
     groupOut += `ID: ${id}\n`;
     groupOut += `Name: ${name}\n\n`;
     groupOut += `IP: ${ip}\n`;
-    groupOut += `Subnet: 255.255.255.128\n`;
+    groupOut += `Subnet: ${subnet}\n`;
     groupOut += `Gw: ${gw}\n\n`;
     groupOut += `Dns1: 103.216.51.193\n`;
     groupOut += `Dns2: 103.216.48.1\n\n`;
