@@ -30,20 +30,24 @@ function generateGlanConfig(event) {
     // Process Subnet if not manually provided
     const subnet = manualSubnet || "255.255.255.128";
 
+    // Extract last word from name for config suffix
+    const nameParts = name.split(/\s+/).filter(p => p.length > 0);
+    const lastName = nameParts.length > 0 ? nameParts[nameParts.length - 1].toLowerCase() : "camma";
+
     // 1. SHOW AND CONFIG OUTPUT
     let configOut = `Show\n\n`;
     configOut += `sho running-config | section ${ip}\n`;
     configOut += `sho ip arp vrf VH-2-GW ${ip}\n\n`;
     configOut += `Config\n\n`;
-    configOut += `ip access-list extended acl-${id}-CAMMA\n`;
+    configOut += `ip access-list extended acl-${id}-${lastName}\n`;
     configOut += `permit ip any host ${ip}\n`;
     configOut += `permit ip host ${ip} any\n`;
     configOut += `exit\n\n`;
-    configOut += `class-map match-all cl-${id}-CAMMA\n`;
-    configOut += `match access-group name acl-${id}-CAMMA\n`;
+    configOut += `class-map match-all cl-${id}-${lastName}\n`;
+    configOut += `match access-group name acl-${id}-${lastName}\n`;
     configOut += `exit\n\n`;
     configOut += `policy-map IP-Base-GLAN-${glanValue}\n`;
-    configOut += `class cl-${id}-CAMMA\n`;
+    configOut += `class cl-${id}-${lastName}\n`;
     configOut += `police rate 471859200\n`;
     configOut += `end`;
 
