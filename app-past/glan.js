@@ -7,19 +7,34 @@ function generateGlanConfig(event) {
     const infoRaw = document.getElementById('glanInfo').value.trim();
     const ip = document.getElementById('glanIp').value.trim();
     
-    // Parse ID and Name from combined info
-    // Match first sequence of digits as ID, rest as Name
-    const infoMatch = infoRaw.match(/^(\d+)\s*(.*)$/);
+    // Default values
     let id = "0000";
     let name = "Unknown";
-    
-    if (infoMatch) {
-        id = infoMatch[1];
-        name = infoMatch[2].trim() || "Unknown";
-    } else if (infoRaw.length > 0) {
-        // Fallback: If no leading digits, use the whole string as name
-        name = infoRaw;
+
+    // Detect if input is a multi-line ticket or single line shorthand
+    if (infoRaw.includes('\n') || infoRaw.includes(':')) {
+        // Ticket Style Parsing
+        const idMatch = infoRaw.match(/^\s*(?:CID\s*\/|C)?ID\s*[:.]?\s*([^\n\r]+)/im);
+        if (idMatch) id = idMatch[1].trim();
+
+        const nameLineMatch = infoRaw.match(/^\s*Name\b\s*[:.]?\s*([^\n\r]+)/im);
+        if (nameLineMatch) {
+            name = nameLineMatch[1].trim();
+            // Clean name (remove parenthesis)
+            const parenIndex = name.indexOf('(');
+            if (parenIndex !== -1) name = name.substring(0, parenIndex).trim();
+        }
+    } else {
+        // Shorthand Parsing (ID Name)
+        const infoMatch = infoRaw.match(/^(\d+)\s*(.*)$/);
+        if (infoMatch) {
+            id = infoMatch[1];
+            name = infoMatch[2].trim() || "Unknown";
+        } else if (infoRaw.length > 0) {
+            name = infoRaw;
+        }
     }
+
 
     // New Manual Overrides with Defaults
     const manualSubnet = document.getElementById('glanSubnet').value.trim();
