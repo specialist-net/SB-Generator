@@ -102,32 +102,15 @@ function parseCustomerData(text) {
         result.name = words[words.length - 1]; // Extract last word
     }
 
-    // Phone parsing
-    const phoneMatch = text.match(/Phone\s*[:.]?\s*([\+\d\s\-]+)/i);
-    if (phoneMatch) {
-        result.phone = phoneMatch[1].trim();
-    } else {
-        const strictPhoneMatch = text.match(/(?:\s|^)(\+?855[\d\s\-]{8,15})/);
-        if (strictPhoneMatch) result.phone = strictPhoneMatch[1].trim();
-    }
-    
-    const formatNum = (num) => {
-        if (!num || num === 'N/A') return num;
-        let cleaned = num.replace(/[\s\-\(\)]/g, '');
-        if (cleaned.startsWith('+')) cleaned = cleaned.substring(1);
-        if (cleaned.startsWith('855') && cleaned.length > 9) {
-            cleaned = '0' + cleaned.substring(3);
-        }
-        return cleaned;
-    };
-    result.phone = formatNum(result.phone);
+    // Phone parsing using shared utility
+    result.phone = normalizePhoneNumber(text);
 
     // Password parse fallback
     const passwordMatch = text.match(/Password\s*[:.]?\s*([^\s|]+)/i);
     if (passwordMatch) result.password = passwordMatch[1].trim();
     
     if (result.password && (result.phone === 'N/A' || result.phone === '')) {
-        result.phone = formatNum(result.password);
+        result.phone = normalizePhoneNumber(result.password);
     }
 
     return result;
