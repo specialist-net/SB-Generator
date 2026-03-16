@@ -126,6 +126,23 @@
             </div>
         </div>
 
+        <!-- Speed Calculator -->
+        <div class="border border-green-800 p-4 mb-4 glow-border">
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-sm tracking-widest uppercase text-green-600 border-b border-green-900 pb-2 flex-grow">>> SPEED_CALCULATOR</h2>
+                <button id="speedToggle" type="button" class="relative w-10 h-5 rounded-full transition-colors duration-300 border border-green-800 ml-4" onclick="toggleSpeed()">
+                    <span id="speedDot" class="absolute top-[1px] left-[2px] w-4 h-4 rounded-full transition-all duration-300 bg-green-900"></span>
+                </button>
+            </div>
+            <div id="speedCalculatorFields" class="hidden grid grid-cols-1 gap-3">
+                <div>
+                    <label class="text-[10px] uppercase block mb-1 text-green-700">Speed (Mbps)</label>
+                    <input type="number" id="speedInput" class="w-full px-3 py-2 text-sm bg-black border border-green-800 text-green-400 placeholder-green-900 focus:border-green-500 focus:outline-none" placeholder="e.g. 50" oninput="calculateSpeed()">
+                </div>
+                <input type="text" id="speedOutput" class="w-full bg-transparent border-0 text-green-400 font-mono text-xs focus:outline-none" readonly placeholder="Awaiting input...">
+            </div>
+        </div>
+
         <!-- Footer -->
         <div class="text-center mt-6 text-green-900 text-xs tracking-wider">
             ADMIN_PANEL :: SB-GENERATOR v1.0
@@ -137,7 +154,14 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="auth.js"></script>
+    <script src="speed-calculator.js"></script>
     <script src="admin.js"></script>
+    <style>
+        :root {
+            --toggle-on: #22c55e;
+            --toggle-off: #14532d;
+        }
+    </style>
 </body>
 
 </html>
