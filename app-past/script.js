@@ -274,7 +274,6 @@ function resetAll() {
     // Toggles
     if(ipcamEnabled) toggleIpcam();
     if(dnsEnabled) toggleDns();
-    if(speedEnabled) toggleSpeed();
 
     // Text Display
     updateParsedDisplay('');
@@ -378,34 +377,3 @@ function toggleDns() {
     }
 }
 
-let speedEnabled = false;
-function toggleSpeed() {
-    speedEnabled = !speedEnabled;
-    const fields = document.getElementById('speedCalculatorFields');
-    const dot = document.getElementById('speedDot');
-
-    if(speedEnabled) {
-        fields.classList.remove('hidden');
-        dot.style.transform = 'translateX(20px)';
-        dot.style.backgroundColor = 'var(--toggle-on)';
-    } else {
-        fields.classList.add('hidden');
-        dot.style.transform = 'translateX(0px)';
-        dot.style.backgroundColor = 'var(--toggle-off)';
-        document.getElementById('speedInput').value = '';
-        document.getElementById('speedOutput').value = '';
-    }
-}
-
-function calculateSpeed() {
-    const speedInput = document.getElementById('speedInput').value;
-    const outputField = document.getElementById('speedOutput');
-    if (!speedInput || speedInput <= 0) {
-        outputField.value = '';
-        return;
-    }
-    const speed = parseFloat(speedInput);
-    const policeRate = speed * 1048576;
-    const burst = Math.round(policeRate * 0.10625);
-    outputField.value = `${speed} police rate ${policeRate} burst ${burst} peak-burst ${burst}`;
-}
