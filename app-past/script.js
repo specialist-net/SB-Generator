@@ -181,8 +181,9 @@ function generateConfig(event) {
     // 1. GENERATE USER INFO
     // ==========================================
     const footerInfo = data.project && data.project !== 'N/A' ? data.project : '';
+    const preConfigStatus = isPreConfig(customerRaw);
 
-    let outUser = `Done Bong. Please help test!\n\n`;
+    let outUser = preConfigStatus ? `Done Pre-config Bong. Please help test!\n\n` : `Done Bong. Please help test!\n\n`;
     outUser += `ID: ${data.id}\n`;
     outUser += `Name: ${data.fullName}\n`;
     
