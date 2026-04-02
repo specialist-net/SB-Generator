@@ -240,16 +240,9 @@
                 GLAN
             </a>
             
-            <a id="adminLink" href="admin.html" class="hidden text-xs noc-btn px-3 py-1 rounded transition-colors uppercase font-bold">
+            <a href="admin.html" class="text-xs noc-btn px-3 py-1 rounded transition-colors uppercase font-bold">
                 ADMIN
             </a>
-            <button onclick="logout()" class="text-xs text-red-500 border border-red-500 px-3 py-1 rounded hover:bg-red-500 hover:text-white transition-colors font-bold uppercase">
-                LOGOUT
-            </button>
-            <div class="text-xs animate-pulse flex items-center gap-2 border-var-color border px-3 py-1 rounded" style="color:var(--border-color); background:var(--copy-bg)">
-                <div class="w-2 h-2 rounded-full bg-var-color"></div>
-                ONLINE
-            </div>
         </div>
     </header>
 
@@ -422,19 +415,7 @@
         DATA COPIED TO CLIPBOARD
     </div>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="auth.js"></script>
-    <script>
-        checkAuth(async (user) => {
-            const isAdmin = await checkAdmin(user);
-            if (isAdmin) {
-                document.getElementById('adminLink').classList.remove('hidden');
-            }
-        });
-    </script>
+
     <script src="phone-utils.js"></script>
     <script src="parser-utils.js"></script>
     <script src="speed-calculator.js"></script>

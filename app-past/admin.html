@@ -34,8 +34,6 @@
         <div class="flex justify-between items-center border border-green-800 p-4 mb-4 glow-border">
             <div>
                 <h1 class="text-xl font-bold glow-text tracking-widest uppercase">Admin Dashboard</h1>
-                <p class="text-green-700 text-xs mt-1">Logged in as: <span id="adminEmail"
-                        class="text-green-400"></span></p>
             </div>
             <div class="flex gap-2">
                 <a href="index.html"
@@ -50,10 +48,6 @@
                     class="border border-green-800 px-3 py-2 text-xs hover:bg-green-900/30 transition-colors tracking-wider">
                     >> GLAN
                 </a>
-                <button onclick="logout()"
-                    class="border border-red-800 text-red-500 px-3 py-2 text-xs hover:bg-red-900/30 transition-colors tracking-wider">
-                    >> LOGOUT
-                </button>
             </div>
         </div>
 
@@ -149,11 +143,21 @@
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
+    <!-- Firebase SDKs (needed for Firestore user management) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="auth.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyArd6_mtR0se_x8SsEacfM8FX7Y5FHsXIU",
+            authDomain: "sb-generator.firebaseapp.com",
+            projectId: "sb-generator",
+            storageBucket: "sb-generator.firebasestorage.app",
+            messagingSenderId: "907351389604",
+            appId: "1:907351389604:web:390cdc27547bb788f6bd31"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+    </script>
     <script src="speed-calculator.js"></script>
     <script src="admin.js"></script>
     <style>

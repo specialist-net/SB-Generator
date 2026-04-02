@@ -2,15 +2,7 @@
 const FIREBASE_API_KEY = 'AIzaSyArd6_mtR0se_x8SsEacfM8FX7Y5FHsXIU';
 
 document.addEventListener('DOMContentLoaded', () => {
-    checkAuth(async (user) => {
-        const isAdmin = await checkAdmin(user);
-        if (!isAdmin) {
-            window.location.href = 'index.html';
-            return;
-        }
-        document.getElementById('adminEmail').textContent = user.email;
-        loadUsers();
-    });
+    loadUsers();
 });
 
 // Load all users from Firestore
@@ -33,7 +25,7 @@ async function loadUsers() {
             row.className = 'border-b border-green-900/50 hover:bg-green-900/10 transition-colors';
 
             const created = data.createdAt ? data.createdAt.toDate().toLocaleDateString() : 'N/A';
-            const isCurrentUser = doc.id === auth.currentUser.uid;
+            const isCurrentUser = false;
 
             row.innerHTML = `
                 <td class="p-3 text-xs">${data.username || '-'}</td>
@@ -145,7 +137,7 @@ async function createUser() {
             email: email,
             role: role,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            createdBy: auth.currentUser.email
+            createdBy: 'admin'
         });
 
         // Create username -> email mapping for login lookup
