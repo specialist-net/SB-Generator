@@ -12,6 +12,7 @@ function generateGlanConfig(event) {
     let name = "Unknown";
 
     // Detect if input is a multi-line ticket or single line shorthand
+    let aid = "";
     if (infoRaw.includes('\n') || infoRaw.includes(':')) {
         // Ticket Style Parsing
         const idMatch = infoRaw.match(/^\s*(?:CID\s*\/|C)?ID\s*[:.]?\s*([^\n\r]+)/im);
@@ -24,6 +25,10 @@ function generateGlanConfig(event) {
             const parenIndex = name.indexOf('(');
             if (parenIndex !== -1) name = name.substring(0, parenIndex).trim();
         }
+
+        // Parse AID number (e.g. AID17330)
+        const aidMatch = infoRaw.match(/\bAID\d+\b/i);
+        if (aidMatch) aid = aidMatch[0].toUpperCase();
     } else {
         // Shorthand Parsing (ID Name)
         const infoMatch = infoRaw.match(/^(\d+)\s*(.*)$/);
@@ -84,8 +89,9 @@ function generateGlanConfig(event) {
     groupOut += `Subnet: ${subnet}\n`;
     groupOut += `Gw: ${gw}\n\n`;
     groupOut += `Dns1: 103.216.51.193\n`;
-    groupOut += `Dns2: 103.216.48.1\n\n`;
-    groupOut += `Thank you.`;
+    groupOut += `Dns2: 103.216.48.1\n`;
+    if (aid) groupOut += `\n${aid}\n`;
+    groupOut += `\nThank you.`;
 
     // Apply to UI
     const configEl = document.getElementById('glanConfigOutput');

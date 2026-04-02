@@ -53,7 +53,8 @@ function parseCustomerData(text) {
         username: '',
         password: '',
         project: '',
-        room: ''
+        room: '',
+        aid: ''
     };
 
     if (!text) return result;
@@ -112,6 +113,10 @@ function parseCustomerData(text) {
     if (result.password && (result.phone === 'N/A' || result.phone === '')) {
         result.phone = normalizePhoneNumber(result.password);
     }
+
+    // AID number (e.g. AID17330)
+    const aidMatch = text.match(/\bAID\d+\b/i);
+    if (aidMatch) result.aid = aidMatch[0].toUpperCase();
 
     return result;
 }
@@ -203,6 +208,7 @@ function generateConfig(event) {
     }
     
     if(footerInfo) outUser += `\n\n${footerInfo}-TCT`;
+    if(data.aid) outUser += `\n${data.aid}`;
     outUser += `\n\nThank you, Bong.`;
 
     // ==========================================
