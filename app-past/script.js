@@ -115,8 +115,8 @@ function parseCustomerData(text) {
     }
 
     // AID number (e.g. AID17330)
-    const aidMatch = text.match(/\bAID\d+\b/i);
-    if (aidMatch) result.aid = aidMatch[0].toUpperCase();
+    const aidMatch = text.match(/(AID\d+)/i);
+    if (aidMatch) result.aid = aidMatch[1].toUpperCase();
 
     return result;
 }
@@ -204,12 +204,12 @@ function generateConfig(event) {
         outUser += `IP view: 103.216.48.130`;
     } else {
         outUser += `Username: ${username}\n`;
-        outUser += `Password: ${data.phone}${dnsLine}`;
+        outUser += `Password: ${data.phone}${dnsLine}\n`;
+        if(data.aid) outUser += `${data.aid}\n`;
     }
     
-    if(footerInfo) outUser += `\n\n${footerInfo}-TCT`;
-    if(data.aid) outUser += `\n${data.aid}`;
-    outUser += `\n\nThank you, Bong.`;
+    if(footerInfo) outUser += `\n${footerInfo}-TCT\n`;
+    outUser += `\nThank you, Bong.`;
 
     // ==========================================
     // 2. GENERATE COMMAND OUTPUT
