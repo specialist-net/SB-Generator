@@ -241,8 +241,22 @@ function generateConfig(event) {
         if (isNewPackage) {
             let descLabel = `${data.id}-${data.name}`;
             outCmd = `onu ${onuId} description ${descLabel}\n`;
-            outCmd += `onu ${onuId} ctc eth 1 vlan pvid ${commandVlan} pri 0\n`;
-            outCmd += `onu ${onuId} ctc eth 1 vlan mode tag`;
+
+            if (vpnEnabled) {
+                const vpnVlan = document.getElementById('vpnVlanInput').value.trim() || commandVlan;
+                const vpnSpeed = parseFloat(document.getElementById('vpnSpeedInput').value) || 0;
+                const baseValue = vpnSpeed * 1024;
+                const policyCir = baseValue * 1.5;
+                const rateLimitCir = baseValue;
+
+                outCmd += `onu ${onuId} ctc eth 1 policy cir ${policyCir} cbs 1024 ebs 1024\n`;
+                outCmd += `onu ${onuId} ctc eth 1 rate_limit cir ${rateLimitCir} pir 1024\n`;
+                outCmd += `onu ${onuId} ctc eth 1 vlan pvid ${vpnVlan} pri 0\n`;
+                outCmd += `onu ${onuId} ctc eth 1 vlan mode tag`;
+            } else {
+                outCmd += `onu ${onuId} ctc eth 1 vlan pvid ${commandVlan} pri 0\n`;
+                outCmd += `onu ${onuId} ctc eth 1 vlan mode tag`;
+            }
         } else {
             let descLabel = `${data.project && data.project !== 'N/A' ? data.project : data.id}-${data.name}`;
             
@@ -293,6 +307,7 @@ function resetAll() {
     // Toggles
     if(ipcamEnabled) toggleIpcam();
     if(dnsEnabled) toggleDns();
+    if(vpnEnabled) toggleVpn();
 
     // Text Display
     updateParsedDisplay('');
@@ -396,3 +411,21 @@ function toggleDns() {
     }
 }
 
+let vpnEnabled = false;
+function toggleVpn() {
+    vpnEnabled = !vpnEnabled;
+    const fields = document.getElementById('vpnFields');
+    const dot = document.getElementById('vpnDot');
+
+    if(vpnEnabled) {
+        fields.classList.remove('hidden');
+        dot.style.transform = 'translateX(20px)';
+        dot.style.backgroundColor = 'var(--toggle-on)';
+    } else {
+        fields.classList.add('hidden');
+        dot.style.transform = 'translateX(0px)';
+        dot.style.backgroundColor = 'var(--toggle-off)';
+        document.getElementById('vpnVlanInput').value = '';
+        document.getElementById('vpnSpeedInput').value = '';
+    }
+}
