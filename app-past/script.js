@@ -57,6 +57,7 @@ function parseCustomerData(text) {
         id: 'N/A',
         name: 'N/A',
         fullName: 'N/A',
+        site: '',
         phone: 'N/A',
         number: 'N/A',
         username: '',
@@ -68,12 +69,15 @@ function parseCustomerData(text) {
 
     if (!text) return result;
 
-    // ID
+    // ID (stop at 'Name' keyword if on the same line)
     const idMatch = text.match(/^\s*(?:CID\s*\/|C)?ID\s*[:.]?\s*([^\n\r]+)/im);
     if (idMatch) {
         let idVal = idMatch[1].trim();
         const doubleIdMatch = idVal.match(/^ID\s*[:.]?\s*(.+)/i);
         if (doubleIdMatch) idVal = doubleIdMatch[1].trim();
+        // Trim at 'Name' keyword if ID and Name share the same line
+        const nameIdx = idVal.search(/\s+Name\s*[:.]?\s/i);
+        if (nameIdx !== -1) idVal = idVal.substring(0, nameIdx).trim();
         result.id = idVal;
     }
 
@@ -104,8 +108,21 @@ function parseCustomerData(text) {
         }
     }
 
+    // Fallback: extract inline name from "ID: 12345 Name: John Doe" format
+    if (result.fullName === 'N/A') {
+        const inlineNameMatch = text.match(/ID\s*[:.]?\s*\S+\s+Name\s*[:.]?\s*([^\n\r]+)/im);
+        if (inlineNameMatch) {
+            result.fullName = inlineNameMatch[1].trim();
+        }
+    }
+
     if (result.fullName !== 'N/A') {
         let cleanName = result.fullName;
+        // Extract site identifier from parentheses (e.g. "(Site C)" → "Site-C")
+        const siteMatch = cleanName.match(/\(([^)]+)\)/);
+        if (siteMatch) {
+            result.site = siteMatch[1].trim().replace(/\s+/g, '-');
+        }
         const parenIndex = cleanName.indexOf('(');
         if (parenIndex !== -1) cleanName = cleanName.substring(0, parenIndex).trim();
         const words = cleanName.trim().split(/\s+/);
@@ -238,25 +255,26 @@ function generateConfig(event) {
     // ==========================================
     let outCmd = '';
     if (onuId !== '??') {
-        if (isNewPackage) {
+        if (vpnEnabled) {
+            // VPN MODE — works for all package types
+            const vpnName = data.site || data.name;
+            let descLabel = `${data.id}-${vpnName}`;
+            const vpnVlan = document.getElementById('vpnVlanInput').value.trim() || commandVlan;
+            const vpnSpeed = parseFloat(document.getElementById('vpnSpeedInput').value) || 0;
+            const baseValue = vpnSpeed * 1024;
+            const policyCir = baseValue * 1.5;
+            const rateLimitCir = baseValue;
+
+            outCmd = `onu ${onuId} description ${descLabel}\n`;
+            outCmd += `onu ${onuId} ctc eth 1 policy cir ${policyCir} cbs 1024 ebs 1024\n`;
+            outCmd += `onu ${onuId} ctc eth 1 rate_limit cir ${rateLimitCir} pir 1024\n`;
+            outCmd += `onu ${onuId} ctc eth 1 vlan pvid ${vpnVlan} pri 0\n`;
+            outCmd += `onu ${onuId} ctc eth 1 vlan mode tag`;
+        } else if (isNewPackage) {
             let descLabel = `${data.id}-${data.name}`;
             outCmd = `onu ${onuId} description ${descLabel}\n`;
-
-            if (vpnEnabled) {
-                const vpnVlan = document.getElementById('vpnVlanInput').value.trim() || commandVlan;
-                const vpnSpeed = parseFloat(document.getElementById('vpnSpeedInput').value) || 0;
-                const baseValue = vpnSpeed * 1024;
-                const policyCir = baseValue * 1.5;
-                const rateLimitCir = baseValue;
-
-                outCmd += `onu ${onuId} ctc eth 1 policy cir ${policyCir} cbs 1024 ebs 1024\n`;
-                outCmd += `onu ${onuId} ctc eth 1 rate_limit cir ${rateLimitCir} pir 1024\n`;
-                outCmd += `onu ${onuId} ctc eth 1 vlan pvid ${vpnVlan} pri 0\n`;
-                outCmd += `onu ${onuId} ctc eth 1 vlan mode tag`;
-            } else {
-                outCmd += `onu ${onuId} ctc eth 1 vlan pvid ${commandVlan} pri 0\n`;
-                outCmd += `onu ${onuId} ctc eth 1 vlan mode tag`;
-            }
+            outCmd += `onu ${onuId} ctc eth 1 vlan pvid ${commandVlan} pri 0\n`;
+            outCmd += `onu ${onuId} ctc eth 1 vlan mode tag`;
         } else {
             let descLabel = `${data.project && data.project !== 'N/A' ? data.project : data.id}-${data.name}`;
             
