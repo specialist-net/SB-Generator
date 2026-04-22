@@ -262,7 +262,7 @@ function generateConfig(event) {
             const vpnVlan = document.getElementById('vpnVlanInput').value.trim() || commandVlan;
             const vpnSpeed = parseFloat(document.getElementById('vpnSpeedInput').value) || 0;
             const baseValue = vpnSpeed * 1024;
-            const policyCir = baseValue * 1.5;
+            const policyCir = baseValue;
             const rateLimitCir = baseValue;
 
             outCmd = `onu ${onuId} description ${descLabel}\n`;
