@@ -239,7 +239,7 @@ function generateConfig(event) {
     let outCmd = '';
     if (onuId !== '??') {
         if (isNewPackage) {
-            let descLabel = `${data.fullName.replace(/\s+/g, '_')}-${data.id}`;
+            let descLabel = `${data.id}-${data.name}`;
             outCmd = `onu ${onuId} description ${descLabel}\n`;
             outCmd += `onu ${onuId} ctc eth 1 vlan pvid ${commandVlan} pri 0\n`;
             outCmd += `onu ${onuId} ctc eth 1 vlan mode tag`;
