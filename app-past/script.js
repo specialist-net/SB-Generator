@@ -6,6 +6,15 @@ document.addEventListener('DOMContentLoaded', () => {
     customerInput.addEventListener('input', () => {
         autoResizeTextarea(customerInput);
         updateParsedDisplay(customerInput.value);
+        
+        // Auto-select package type
+        const text = customerInput.value;
+        const packageSelect = document.getElementById('packageType');
+        if (/today\s*wifi/i.test(text)) {
+            packageSelect.value = '@todaywifi';
+        } else if (/\bbbi\b/i.test(text)) {
+            packageSelect.value = '@bbi';
+        }
     });
     
     // Generate on Ctrl+Enter
@@ -147,7 +156,9 @@ function generateConfig(event) {
         '@todayhome': 67,
         '@todayfiber': 63,
         '@todayplus': 67,
-        '@sf': 64
+        '@sf': 64,
+        '@todaywifi': 66,
+        '@bbi': 61
     };
     const commandVlan = pkgVlanMap[packageType] || 67;
 
@@ -185,49 +196,67 @@ function generateConfig(event) {
     // ==========================================
     // 1. GENERATE USER INFO
     // ==========================================
+    const isNewPackage = packageType === '@todaywifi' || packageType === '@bbi';
     const footerInfo = data.project && data.project !== 'N/A' ? data.project : '';
     const preConfigStatus = isPreConfig(rawText);
 
-    let outUser = preConfigStatus ? `Done Pre-config Bong. Please help test!\n\n` : `Done Bong. Please help test!\n\n`;
-    outUser += `ID: ${data.id}\n`;
-    outUser += `Name: ${data.fullName}\n`;
-    
-    if(ipcamEnabled) {
-        const ipAddress = document.getElementById('ipInput').value.trim();
-        const portNum = document.getElementById('portInput').value.trim();
-        const ipParts = ipAddress.split('.');
-        const gateway = (ipParts.length === 4) ? `${ipParts[0]}.${ipParts[1]}.${ipParts[2]}.1` : 'N/A';
-        outUser += `IP :${ipAddress}\n`;
-        outUser += `Sub : 255.255.252.0\n`;
-        outUser += `GW : ${gateway}\n`;
-        outUser += `Port : ${portNum}\n\n`;
-        outUser += `IP view: 103.216.48.130`;
-    } else {
+    let outUser = '';
+    if (isNewPackage) {
+        outUser = `Done Bong. Please help test!\n\n`;
+        outUser += `ID: ${data.id}\n`;
+        outUser += `Name: ${data.fullName}\n`;
         outUser += `Username: ${username}\n`;
-        outUser += `Password: ${data.phone}${dnsLine}\n`;
-        if(data.aid) outUser += `${data.aid}\n`;
+        outUser += `Password: ${data.phone}\n\n`;
+        outUser += `Thank you, Bong.`;
+    } else {
+        outUser = preConfigStatus ? `Done Pre-config Bong. Please help test!\n\n` : `Done Bong. Please help test!\n\n`;
+        outUser += `ID: ${data.id}\n`;
+        outUser += `Name: ${data.fullName}\n`;
+        
+        if(ipcamEnabled) {
+            const ipAddress = document.getElementById('ipInput').value.trim();
+            const portNum = document.getElementById('portInput').value.trim();
+            const ipParts = ipAddress.split('.');
+            const gateway = (ipParts.length === 4) ? `${ipParts[0]}.${ipParts[1]}.${ipParts[2]}.1` : 'N/A';
+            outUser += `IP :${ipAddress}\n`;
+            outUser += `Sub : 255.255.252.0\n`;
+            outUser += `GW : ${gateway}\n`;
+            outUser += `Port : ${portNum}\n\n`;
+            outUser += `IP view: 103.216.48.130`;
+        } else {
+            outUser += `Username: ${username}\n`;
+            outUser += `Password: ${data.phone}${dnsLine}\n`;
+            if(data.aid) outUser += `${data.aid}\n`;
+        }
+        
+        if(footerInfo) outUser += `\n${footerInfo}-TCT\n`;
+        outUser += `\nThank you, Bong.`;
     }
-    
-    if(footerInfo) outUser += `\n${footerInfo}-TCT\n`;
-    outUser += `\nThank you, Bong.`;
 
     // ==========================================
     // 2. GENERATE COMMAND OUTPUT
     // ==========================================
     let outCmd = '';
     if (onuId !== '??') {
-        let descLabel = `${data.project && data.project !== 'N/A' ? data.project : data.id}-${data.name}`;
-        
-        outCmd = `onu ${onuId} description ${descLabel}\n`;
-        outCmd += `onu ${onuId} ctc eth 1 vlan pvid ${commandVlan} pri 0\n`;
-        outCmd += `onu ${onuId} ctc eth 1 vlan mode tag`;
+        if (isNewPackage) {
+            let descLabel = `${data.fullName.replace(/\s+/g, '_')}-${data.id}`;
+            outCmd = `onu ${onuId} description ${descLabel}\n`;
+            outCmd += `onu ${onuId} ctc eth 1 vlan pvid ${commandVlan} pri 0\n`;
+            outCmd += `onu ${onuId} ctc eth 1 vlan mode tag`;
+        } else {
+            let descLabel = `${data.project && data.project !== 'N/A' ? data.project : data.id}-${data.name}`;
+            
+            outCmd = `onu ${onuId} description ${descLabel}\n`;
+            outCmd += `onu ${onuId} ctc eth 1 vlan pvid ${commandVlan} pri 0\n`;
+            outCmd += `onu ${onuId} ctc eth 1 vlan mode tag`;
 
-        if(ipcamEnabled) {
-            outCmd += `\n\nonu ${onuId} ctc eth 2 phy_ctrl enable\n`;
-            outCmd += `onu ${onuId} ctc eth 2 policy cir 10240 cbs 1024 ebs 1024 \n`;
-            outCmd += `onu ${onuId} ctc eth 2 rate_limit cir 10240 pir 1024 \n`;
-            outCmd += `onu ${onuId} ctc eth 2 vlan pvid 420 pri 0\n`;
-            outCmd += `onu ${onuId} ctc eth 2 vlan mode tag`;
+            if(ipcamEnabled) {
+                outCmd += `\n\nonu ${onuId} ctc eth 2 phy_ctrl enable\n`;
+                outCmd += `onu ${onuId} ctc eth 2 policy cir 10240 cbs 1024 ebs 1024 \n`;
+                outCmd += `onu ${onuId} ctc eth 2 rate_limit cir 10240 pir 1024 \n`;
+                outCmd += `onu ${onuId} ctc eth 2 vlan pvid 420 pri 0\n`;
+                outCmd += `onu ${onuId} ctc eth 2 vlan mode tag`;
+            }
         }
     } else {
         outCmd = `Please specify a valid ONU ID (e.g., EPON0/1:36)`;
