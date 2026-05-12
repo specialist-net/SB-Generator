@@ -14,6 +14,12 @@ document.addEventListener('DOMContentLoaded', () => {
             packageSelect.value = '@todaywifi';
         } else if (/\bbbi\b/i.test(text)) {
             packageSelect.value = '@bbi';
+        } else if (/gigaedge/i.test(text)) {
+            packageSelect.value = '@gigaedge';
+        } else if (/megaedge/i.test(text)) {
+            packageSelect.value = '@megaedge';
+        } else if (/bizedge/i.test(text)) {
+            packageSelect.value = '@bizedge';
         }
     });
     
@@ -175,7 +181,10 @@ function generateConfig(event) {
         '@todayplus': 67,
         '@sf': 64,
         '@todaywifi': 66,
-        '@bbi': 61
+        '@bbi': 61,
+        '@gigaedge': 64,
+        '@megaedge': 64,
+        '@bizedge': 64
     };
     const commandVlan = pkgVlanMap[packageType] || 67;
 
