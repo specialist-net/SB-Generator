@@ -294,6 +294,14 @@
 
             <div class="space-y-4 flex-grow">
                 <div>
+                    <label class="noc-label">PROD ID</label>
+                    <input type="text" id="prodInput" class="noc-input w-full p-2 text-sm uppercase" placeholder="2150085986AGQB019129">
+                </div>
+                <div>
+                    <label class="noc-label">MAC Address</label>
+                    <input type="text" id="macInput" class="noc-input w-full p-2 text-sm uppercase" placeholder="78DD335DB138">
+                </div>
+                <div>
                     <label class="noc-label">SN (Serial Number)</label>
                     <input type="text" id="snInput" class="noc-input w-full p-2 text-sm uppercase" placeholder="4857544327C2CFA4">
                 </div>
@@ -527,8 +535,11 @@
 
             const heading = preConfigStatus ? "Done Pre-config Bong. Please help test!" : "Done Bong. Please help test!";
             
+            const prod = document.getElementById('prodInput').value.trim();
+            const mac = document.getElementById('macInput').value.trim();
+
             const output1 = `${heading}\n\nID: ${data.id}\nName: ${data.name}\nUsername: ${username}\nPassword: ${password}\n\n${bottomTag}\n\nThank you, Bong.`;
-            const output2 = `Dear bong, please active this customer new install\n\nOrder : ${data.orderNum}\nVLAN : ${connectionType}\nMode : Bridge\n\nSN : ${sn}`;
+            const output2 = `Dear bong, please active this customer new install\n\nOrder : ${data.orderNum}\nVLAN : ${connectionType}\nMode : Bridge\n\nPROD ID:${prod}\nMAC:${mac}\nSN:${sn}\n\nThanks`;
 
             document.getElementById('userInfoOutput').value = output1;
             document.getElementById('tctGroupOutput').value = output2;
@@ -536,6 +547,8 @@
 
         function resetAll() {
             document.getElementById('customerTicket').value = '';
+            document.getElementById('prodInput').value = '';
+            document.getElementById('macInput').value = '';
             document.getElementById('snInput').value = '';
             document.getElementById('onuId').value = '';
             document.getElementById('connectionType').selectedIndex = 0;
