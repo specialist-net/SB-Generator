@@ -298,10 +298,10 @@
                     >> INFRA CONFIG
                 </h2>
                 <div class="flex border border-var-color rounded overflow-hidden p-0.5" style="background-color: var(--input-bg)">
-                    <button id="modeTctBtn" type="button" onclick="setInfraMode('TCT')" class="text-xs font-bold px-3 py-1 rounded transition-colors uppercase font-mono bg-var-color text-var-main">
+                    <button id="modeTctBtn" type="button" onclick="setInfraMode('TCT')" class="text-xs font-bold px-3 py-1 rounded transition-all uppercase font-mono cursor-pointer" style="background-color: var(--border-color); color: #000000;">
                         TCT INFRA
                     </button>
-                    <button id="modeMmBtn" type="button" onclick="setInfraMode('MM')" class="text-xs font-bold px-3 py-1 rounded transition-colors uppercase font-mono opacity-60 hover:opacity-100">
+                    <button id="modeMmBtn" type="button" onclick="setInfraMode('MM')" class="text-xs font-bold px-3 py-1 rounded transition-all uppercase font-mono cursor-pointer opacity-70" style="background-color: transparent; color: var(--text-main);">
                         MM INFRA
                     </button>
                 </div>
@@ -449,8 +449,14 @@
             const connTypeSelect = document.getElementById('connectionType');
 
             if (mode === 'MM') {
-                tctBtn.className = "text-xs font-bold px-3 py-1 rounded transition-colors uppercase font-mono opacity-60 hover:opacity-100";
-                mmBtn.className = "text-xs font-bold px-3 py-1 rounded transition-colors uppercase font-mono bg-var-color text-var-main";
+                tctBtn.style.backgroundColor = 'transparent';
+                tctBtn.style.color = 'var(--text-main)';
+                tctBtn.style.opacity = '0.7';
+
+                mmBtn.style.backgroundColor = 'var(--border-color)';
+                mmBtn.style.color = '#000000';
+                mmBtn.style.opacity = '1';
+
                 if (groupOutputLabel) groupOutputLabel.innerText = ">> TO_MM_GROUP";
 
                 connTypeSelect.innerHTML = `
@@ -462,8 +468,14 @@
                     <option value="3155">3155 (VPN)</option>
                 `;
             } else {
-                mmBtn.className = "text-xs font-bold px-3 py-1 rounded transition-colors uppercase font-mono opacity-60 hover:opacity-100";
-                tctBtn.className = "text-xs font-bold px-3 py-1 rounded transition-colors uppercase font-mono bg-var-color text-var-main";
+                mmBtn.style.backgroundColor = 'transparent';
+                mmBtn.style.color = 'var(--text-main)';
+                mmBtn.style.opacity = '0.7';
+
+                tctBtn.style.backgroundColor = 'var(--border-color)';
+                tctBtn.style.color = '#000000';
+                tctBtn.style.opacity = '1';
+
                 if (groupOutputLabel) groupOutputLabel.innerText = ">> TO_TCT_GROUP";
 
                 connTypeSelect.innerHTML = `
@@ -608,8 +620,8 @@
             const orderMatch = text.match(/(?:order|order\s*id)\s*[:.\uFF1A]?\s*([^\n\r]+)/i) || text.match(/(TD\d{4})/i);
             const fullOrderMatch = text.match(/(TD\d{4}-TCT)/i);
 
-            // MM ID
-            const mmMatch = text.match(/(?:MM|MM\s*ID)\s*[:.\uFF1A]?\s*([^\n\r]+)/i);
+            // MM ID - line must start with MM or MM ID followed by colon/dot e.g. "MM: 34629"
+            const mmMatch = text.match(/^\s*(?:MM|MM\s*ID)\s*[:.\uFF1A]\s*([^\n\r]+)/im);
 
             return {
                 id: idMatch ? idMatch[1].trim() : "UNKNOWN",
