@@ -273,13 +273,17 @@
                         <label class="text-[10px] uppercase block mb-1 text-var-muted">Order ID</label>
                         <div id="disp_order" class="text-sm font-bold truncate h-5 text-var-main">--</div>
                     </div>
+                    <div>
+                        <label class="text-[10px] uppercase block mb-1 text-var-muted">MM ID</label>
+                        <div id="disp_mm" class="text-sm font-bold truncate h-5 text-var-main">--</div>
+                    </div>
+                    <div>
+                        <label class="text-[10px] uppercase block mb-1 text-var-muted">Phone</label>
+                        <div id="disp_phone" class="text-sm font-bold truncate h-5 text-var-main">--</div>
+                    </div>
                     <div class="col-span-2 border-t border-var-color pt-2">
                         <label class="text-[10px] uppercase block mb-1 text-var-muted">Customer Name</label>
                         <div id="disp_name" class="text-sm font-bold truncate h-5 text-var-main">--</div>
-                    </div>
-                    <div class="col-span-2">
-                        <label class="text-[10px] uppercase block mb-1 text-var-muted">Phone</label>
-                        <div id="disp_phone" class="text-sm font-bold truncate h-5 text-var-main">--</div>
                     </div>
                 </div>
             </div>
@@ -287,13 +291,24 @@
 
         <!-- CENTER PANEL: NETWORK CONFIG -->
         <section class="noc-panel flex flex-col h-full">
-            <h2 class="font-bold mb-4 flex items-center gap-2 border-b border-var-color pb-2 text-var-accent">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                >> NETWORK CONFIGURATION
-            </h2>
+            <!-- Mode Switcher -->
+            <div class="flex items-center justify-between border-b border-var-color pb-3 mb-4">
+                <h2 class="font-bold flex items-center gap-2 text-var-accent !mb-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    >> INFRA CONFIG
+                </h2>
+                <div class="flex border border-var-color rounded overflow-hidden p-0.5" style="background-color: var(--input-bg)">
+                    <button id="modeTctBtn" type="button" onclick="setInfraMode('TCT')" class="text-xs font-bold px-3 py-1 rounded transition-colors uppercase font-mono bg-var-color text-var-main">
+                        TCT INFRA
+                    </button>
+                    <button id="modeMmBtn" type="button" onclick="setInfraMode('MM')" class="text-xs font-bold px-3 py-1 rounded transition-colors uppercase font-mono opacity-60 hover:opacity-100">
+                        MM INFRA
+                    </button>
+                </div>
+            </div>
 
             <div class="space-y-4 flex-grow">
-                <div>
+                <div id="prodContainer">
                     <label class="noc-label">PROD ID</label>
                     <input type="text" id="prodInput" class="noc-input w-full p-2 text-sm uppercase" placeholder="2150085986AGQB019129">
                 </div>
@@ -301,17 +316,17 @@
                     <label class="noc-label">MAC Address</label>
                     <input type="text" id="macInput" class="noc-input w-full p-2 text-sm uppercase" placeholder="78DD335DB138">
                 </div>
-                <div>
+                <div id="snContainer">
                     <label class="noc-label">SN (Serial Number)</label>
                     <input type="text" id="snInput" class="noc-input w-full p-2 text-sm uppercase" placeholder="4857544327C2CFA4">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="noc-label">Connection Type</label>
+                        <label id="connTypeLabel" class="noc-label">Connection Type</label>
                         <select id="connectionType" class="noc-input w-full p-2 text-sm">
-                            <option value="2422">PPPoE</option>
-                            <option value="2423">Static IP</option>
+                            <option value="2422">PPPoE (2422)</option>
+                            <option value="2423">Static IP (2423)</option>
                         </select>
                     </div>
                     <div>
@@ -394,12 +409,12 @@
 
             <div class="flex flex-col h-[200px] shrink-0">
                 <div class="flex justify-between items-center mb-1">
-                    <label class="noc-label !mb-0">>> TO_TCT_GROUP</label>
+                    <label id="groupOutputLabel" class="noc-label !mb-0">>> TO_TCT_GROUP</label>
                     <button onclick="copyOutput('tctGroupOutput', this)" class="copy-btn text-[10px] px-3 py-1 flex items-center gap-1 font-mono uppercase font-bold">
                         COPY
                     </button>
                 </div>
-                <textarea id="tctGroupOutput" class="noc-output-area w-full flex-grow p-3 text-xs resize-none" placeholder="TCT Group format will appear here..."></textarea>
+                <textarea id="tctGroupOutput" class="noc-output-area w-full flex-grow p-3 text-xs resize-none" placeholder="Group format will appear here..."></textarea>
             </div>
 
         </section>
@@ -424,6 +439,40 @@
     </div>
 
     <script>
+        let currentInfraMode = 'TCT';
+
+        function setInfraMode(mode) {
+            currentInfraMode = mode;
+            const tctBtn = document.getElementById('modeTctBtn');
+            const mmBtn = document.getElementById('modeMmBtn');
+            const groupOutputLabel = document.getElementById('groupOutputLabel');
+            const connTypeSelect = document.getElementById('connectionType');
+
+            if (mode === 'MM') {
+                tctBtn.className = "text-xs font-bold px-3 py-1 rounded transition-colors uppercase font-mono opacity-60 hover:opacity-100";
+                mmBtn.className = "text-xs font-bold px-3 py-1 rounded transition-colors uppercase font-mono bg-var-color text-var-main";
+                if (groupOutputLabel) groupOutputLabel.innerText = ">> TO_MM_GROUP";
+
+                connTypeSelect.innerHTML = `
+                    <option value="3158" selected>3158 (PPPoE)</option>
+                    <option value="3152">3152 (GLAN)</option>
+                    <option value="3153">3153 (GLAN)</option>
+                    <option value="3157">3157 (GLAN)</option>
+                    <option value="3154">3154 (VPN)</option>
+                    <option value="3155">3155 (VPN)</option>
+                `;
+            } else {
+                mmBtn.className = "text-xs font-bold px-3 py-1 rounded transition-colors uppercase font-mono opacity-60 hover:opacity-100";
+                tctBtn.className = "text-xs font-bold px-3 py-1 rounded transition-colors uppercase font-mono bg-var-color text-var-main";
+                if (groupOutputLabel) groupOutputLabel.innerText = ">> TO_TCT_GROUP";
+
+                connTypeSelect.innerHTML = `
+                    <option value="2422" selected>PPPoE (2422)</option>
+                    <option value="2423">Static IP (2423)</option>
+                `;
+            }
+        }
+
         function toggleTheme() {
             const html = document.documentElement;
             const currentTheme = html.className;
@@ -444,6 +493,8 @@
                 document.getElementById('disp_name').innerText = data.name !== "UNKNOWN" ? data.name : '--';
                 document.getElementById('disp_phone').innerText = data.phone !== "UNKNOWN" ? data.phone : '--';
                 document.getElementById('disp_order').innerText = data.orderNum !== "UNKNOWN" ? data.orderNum : '--';
+                const dispMm = document.getElementById('disp_mm');
+                if (dispMm) dispMm.innerText = data.mmId !== "UNKNOWN" ? data.mmId : '--';
                 
                 const detectedPkg = autoDetectPackage(customerInput.value);
                 const packageSelect = document.getElementById('packageType');
@@ -544,7 +595,7 @@
                     if (lines[i].includes(idMatch[0])) {
                         if (i + 1 < lines.length) {
                             const nextLine = lines[i + 1].trim();
-                            if (nextLine && !/^(?:contact|address|note|order|phone|cid|id|password)\s*[:.]/i.test(nextLine)) {
+                            if (nextLine && !/^(?:contact|address|note|order|phone|cid|id|password|mm)\s*[:.]/i.test(nextLine)) {
                                 nameVal = nextLine;
                                 break;
                             }
@@ -557,19 +608,22 @@
             const orderMatch = text.match(/(?:order|order\s*id)\s*[:.\uFF1A]?\s*([^\n\r]+)/i) || text.match(/(TD\d{4})/i);
             const fullOrderMatch = text.match(/(TD\d{4}-TCT)/i);
 
+            // MM ID
+            const mmMatch = text.match(/(?:MM|MM\s*ID)\s*[:.\uFF1A]?\s*([^\n\r]+)/i);
+
             return {
                 id: idMatch ? idMatch[1].trim() : "UNKNOWN",
                 name: nameVal,
                 phone: normalizePhoneNumber(text),
                 orderFull: fullOrderMatch ? fullOrderMatch[1].trim() : null,
-                orderNum: orderMatch ? orderMatch[1].trim() : "UNKNOWN"
+                orderNum: orderMatch ? orderMatch[1].trim() : "UNKNOWN",
+                mmId: mmMatch ? mmMatch[1].trim() : "UNKNOWN"
             };
         }
 
         function executeGeneration(event) {
             if (event) event.preventDefault();
             const ticketText = document.getElementById('customerTicket').value;
-            const sn = document.getElementById('snInput').value.trim();
             const connectionType = document.getElementById('connectionType').value;
             const packageType = document.getElementById('packageType').value;
 
@@ -577,33 +631,46 @@
                 alert("Please paste the customer ticket info first.");
                 return;
             }
-            if (!sn) {
-                alert("Please enter the SN.");
-                return;
-            }
 
             const data = extractData(ticketText);
-            const last8 = sn.length >= 8 ? sn.slice(-8) : sn;
-            const username = `${last8}${packageType}`;
+
+            const macRaw = document.getElementById('macInput').value.trim();
+            const snRaw = document.getElementById('snInput').value.trim();
+            let macSource = macRaw || snRaw || '12345678';
+            let macClean = macSource.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            if (macClean.length >= 8) macClean = macClean.slice(-8);
+            const username = `${macClean}${packageType}`;
             
             let password = data.phone;
-            // password already normalized to 0... format in extractData -> normalizePhoneNumber
-
             const preConfigStatus = isPreConfig(ticketText);
 
             const heading = preConfigStatus ? "Done Pre-config Bong" : "Done active please help confirm service";
             const footerText = preConfigStatus ? "Thank you, Bong." : "Thank you.";
 
-            const orderLine = data.orderNum !== "UNKNOWN" ? `Order : ${data.orderNum}\n` : (data.orderFull ? `${data.orderFull}\n` : "");
+            if (currentInfraMode === 'MM') {
+                const mmLine = data.mmId !== "UNKNOWN" ? `MM: ${data.mmId}\n` : '';
+                const orderLine = data.orderNum !== "UNKNOWN" ? `Order : ${data.orderNum}\n` : (data.orderFull ? `${data.orderFull}\n` : "");
 
-            const prod = document.getElementById('prodInput').value.trim();
-            const mac = document.getElementById('macInput').value.trim();
+                const output1 = `${heading}\n\nID: ${data.id}\nName: ${data.name}\nUsername: ${username}\nPassword: ${password}\n${mmLine}${orderLine}\n${footerText}`;
+                
+                const mmIdVal = data.mmId !== "UNKNOWN" ? data.mmId : (data.id !== "UNKNOWN" ? data.id : '');
+                const output2 = `Dear MM Team,\n\nKindly help active new connection. \nThe account with ID: ${mmIdVal}\nVLAN:${connectionType}  .\n\nThank you`;
 
-            const output1 = `${heading}\n\nID: ${data.id}\nName: ${data.name}\nUsername: ${username}\nPassword: ${password}\n${orderLine}\n${footerText}`;
-            const output2 = `Dear bong, please active this customer new install\n\nOrder : ${data.orderNum}\nVLAN : ${connectionType}\nMode : Bridge\n\nPROD ID:${prod}\nMAC:${mac}\nSN:${sn}\n\nThanks`;
+                document.getElementById('userInfoOutput').value = output1;
+                document.getElementById('tctGroupOutput').value = output2;
+            } else {
+                const prod = document.getElementById('prodInput').value.trim();
+                const mac = document.getElementById('macInput').value.trim();
+                const sn = document.getElementById('snInput').value.trim();
 
-            document.getElementById('userInfoOutput').value = output1;
-            document.getElementById('tctGroupOutput').value = output2;
+                const orderLine = data.orderNum !== "UNKNOWN" ? `Order : ${data.orderNum}\n` : (data.orderFull ? `${data.orderFull}\n` : "");
+
+                const output1 = `${heading}\n\nID: ${data.id}\nName: ${data.name}\nUsername: ${username}\nPassword: ${password}\n${orderLine}\n${footerText}`;
+                const output2 = `Dear bong, please active this customer new install\n\nOrder : ${data.orderNum}\nVLAN : ${connectionType}\nMode : Bridge\n\nPROD ID:${prod}\nMAC:${mac}\nSN:${sn}\n\nThanks`;
+
+                document.getElementById('userInfoOutput').value = output1;
+                document.getElementById('tctGroupOutput').value = output2;
+            }
         }
 
         function resetAll() {
@@ -619,6 +686,8 @@
             document.getElementById('disp_name').innerText = '--';
             document.getElementById('disp_phone').innerText = '--';
             document.getElementById('disp_order').innerText = '--';
+            const dispMm = document.getElementById('disp_mm');
+            if (dispMm) dispMm.innerText = '--';
 
             document.getElementById('userInfoOutput').value = '';
             document.getElementById('tctGroupOutput').value = '';
