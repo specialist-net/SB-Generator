@@ -234,6 +234,10 @@
             <a href="app-past/glan.html" class="text-xs noc-btn px-3 py-1 rounded transition-colors uppercase font-bold">
                 GLAN
             </a>
+            <button onclick="openTopologyModal()" class="text-xs noc-btn px-3 py-1 rounded transition-colors uppercase font-bold flex items-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                TOPOLOGY
+            </button>
             
             <div class="text-xs animate-pulse flex items-center gap-2 border-var-color border px-3 py-1 rounded" style="color:var(--border-color); background:var(--copy-bg)">
                 <div class="w-2 h-2 rounded-full bg-var-color"></div>
@@ -438,7 +442,68 @@
         DATA COPIED TO CLIPBOARD
     </div>
 
+    <!-- Topology Modal -->
+    <div id="topologyModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex-col p-4 md:p-6 transition-all duration-300">
+        <div class="noc-panel flex flex-col w-full h-full max-w-7xl mx-auto rounded-lg shadow-2xl overflow-hidden border border-var-color" style="background-color: var(--panel-bg)">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-4 border-b border-var-color shrink-0">
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-var-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-var-main !mb-0">>> NETWORK TOPOLOGY VIEWER</h2>
+                </div>
+                <div class="flex items-center gap-3">
+                    <label class="text-[11px] noc-btn px-2.5 py-1 rounded cursor-pointer uppercase font-bold flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        <span>Load Local PDF</span>
+                        <input type="file" accept="application/pdf" class="hidden" onchange="loadCustomPdf(event)">
+                    </label>
+                    <a id="openPdfNewTab" href="topology.pdf" target="_blank" class="text-[11px] noc-btn px-2.5 py-1 rounded uppercase font-bold flex items-center gap-1">
+                        ↗ Open Tab
+                    </a>
+                    <button onclick="closeTopologyModal()" class="text-xs font-bold px-3 py-1 rounded border border-red-500/40 text-red-400 hover:bg-red-500/20 transition-all uppercase">
+                        ✕ Close
+                    </button>
+                </div>
+            </div>
+            <!-- Modal Body (PDF Viewer) -->
+            <div class="flex-grow w-full h-full relative" style="background-color: var(--input-bg)">
+                <iframe id="topologyIframe" src="topology.pdf" class="w-full h-full border-0"></iframe>
+            </div>
+        </div>
+    </div>
+
     <script>
+        function openTopologyModal() {
+            const modal = document.getElementById('topologyModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+        }
+
+        function closeTopologyModal() {
+            const modal = document.getElementById('topologyModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function loadCustomPdf(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const fileUrl = URL.createObjectURL(file);
+                const iframe = document.getElementById('topologyIframe');
+                const openBtn = document.getElementById('openPdfNewTab');
+                if (iframe) iframe.src = fileUrl;
+                if (openBtn) openBtn.href = fileUrl;
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeTopologyModal();
+        });
+
         let currentInfraMode = 'TCT';
 
         function setInfraMode(mode) {
