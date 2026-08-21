@@ -243,11 +243,17 @@ function generateConfig(event) {
 
     // ONU interface parse
     let onuId = '??';
-    if (/^\d+$/.test(interfaceStr.trim())) {
-        onuId = interfaceStr.trim();
-    } else {
-        const onuIdMatch = interfaceStr.match(/:(\d+)$/);
-        if (onuIdMatch) onuId = onuIdMatch[1];
+    const cleanInterfaceStr = interfaceStr.trim();
+    if (cleanInterfaceStr) {
+        if (cleanInterfaceStr.includes(':')) {
+            const parts = cleanInterfaceStr.split(':');
+            onuId = parts[parts.length - 1].trim();
+        } else if (cleanInterfaceStr.includes('/')) {
+            const parts = cleanInterfaceStr.split('/');
+            onuId = parts[parts.length - 1].trim();
+        } else {
+            onuId = cleanInterfaceStr;
+        }
     }
     
     // Build Username
