@@ -111,6 +111,16 @@ function generateGlanConfig(event) {
         groupEl.innerText = groupOut;
         if (typeof autoExpand === "function") autoExpand(groupEl);
     }
+
+    if (typeof saveTicketToHistory === 'function') {
+        saveTicketToHistory({
+            id: id,
+            name: name,
+            mode: 'GLAN',
+            ticketText: infoRaw,
+            connectionType: glanValue
+        });
+    }
 }
 
 // Global Copy Engine (Reuses same logic from script.js)

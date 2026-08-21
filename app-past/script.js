@@ -429,6 +429,20 @@ function generateConfig(event) {
         commandEl.value = outCmd;
     }
     copyInterface();
+
+    if (typeof saveTicketToHistory === 'function') {
+        saveTicketToHistory({
+            id: data.id,
+            name: data.fullName || data.name,
+            mode: 'MAIN',
+            ticketText: rawText,
+            mac: macInputVal,
+            connectionType: connectionType,
+            packageType: packageType,
+            onuId: onuId,
+            interfacePrefix: document.getElementById('interfacePrefix') ? document.getElementById('interfacePrefix').value : 'EPON0/1:'
+        });
+    }
 }
 
 // Reset Logic

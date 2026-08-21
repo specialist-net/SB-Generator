@@ -238,6 +238,10 @@
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 TOPOLOGY
             </button>
+            <button onclick="openHistoryModal()" class="text-xs noc-btn px-3 py-1 rounded transition-colors uppercase font-bold flex items-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                HISTORY (<span class="history-count-badge">0</span>)
+            </button>
             
             <div class="text-xs animate-pulse flex items-center gap-2 border-var-color border px-3 py-1 rounded" style="color:var(--border-color); background:var(--copy-bg)">
                 <div class="w-2 h-2 rounded-full bg-var-color"></div>
@@ -249,6 +253,7 @@
     <script src="app-past/phone-utils.js"></script>
     <script src="app-past/parser-utils.js"></script>
     <script src="app-past/speed-calculator.js"></script>
+    <script src="app-past/history-utils.js"></script>
 
     <!-- Main 3-Column Grid -->
     <main class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
@@ -440,6 +445,31 @@
     <div id="toast" class="fixed bottom-6 right-6 font-bold px-4 py-2 rounded shadow-lg flex items-center gap-2 z-50 text-xs tracking-widest uppercase border-var-color border" style="background-color: var(--copy-bg); color: var(--border-color)">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
         DATA COPIED TO CLIPBOARD
+    </div>
+
+    <!-- History Modal -->
+    <div id="historyModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex-col p-4 md:p-6 transition-all duration-300">
+        <div class="noc-panel flex flex-col w-full h-full max-w-4xl mx-auto rounded-lg shadow-2xl overflow-hidden border border-var-color" style="background-color: var(--panel-bg)">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-4 border-b border-var-color shrink-0">
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-var-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-var-main !mb-0">>> RECENT TICKET HISTORY</h2>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="clearTicketHistory()" class="text-[11px] noc-btn px-2.5 py-1 rounded uppercase font-bold text-red-400 border-red-500/30 hover:bg-red-500/20">
+                        Clear All
+                    </button>
+                    <button onclick="closeHistoryModal()" class="text-xs font-bold px-3 py-1 rounded border border-red-500/40 text-red-400 hover:bg-red-500/20 transition-all uppercase">
+                        ✕ Close
+                    </button>
+                </div>
+            </div>
+            <!-- Modal Body (History List) -->
+            <div id="historyListContainer" class="flex-grow p-4 space-y-3 overflow-y-auto" style="background-color: var(--input-bg)">
+                <!-- Dynamic Items Rendered Here -->
+            </div>
+        </div>
     </div>
 
     <!-- Topology Modal -->
@@ -765,6 +795,22 @@
 
                 document.getElementById('userInfoOutput').value = output1;
                 document.getElementById('tctGroupOutput').value = output2;
+            }
+
+            if (typeof saveTicketToHistory === 'function') {
+                saveTicketToHistory({
+                    id: data.id,
+                    name: data.name,
+                    mode: currentInfraMode,
+                    ticketText: ticketText,
+                    prod: document.getElementById('prodInput').value.trim(),
+                    mac: macRaw,
+                    sn: snRaw,
+                    connectionType: connectionType,
+                    packageType: packageType,
+                    onuId: document.getElementById('onuId').value.trim(),
+                    interfacePrefix: document.getElementById('interfacePrefix').value
+                });
             }
         }
 
