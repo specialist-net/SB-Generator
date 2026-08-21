@@ -713,10 +713,24 @@
 
             const macRaw = document.getElementById('macInput').value.trim();
             const snRaw = document.getElementById('snInput').value.trim();
-            let macSource = macRaw || snRaw || '12345678';
-            let macClean = macSource.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-            if (macClean.length >= 8) macClean = macClean.slice(-8);
-            const username = `${macClean}${packageType}`;
+            
+            let userTag = '12345678';
+            if (currentInfraMode === 'TCT') {
+                // In TCT Mode, username is derived from SN (Serial Number)
+                const source = snRaw || macRaw;
+                if (source) {
+                    let clean = source.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                    userTag = clean.length >= 8 ? clean.slice(-8) : clean;
+                }
+            } else {
+                // In MM Mode, username is derived from MAC Address
+                const source = macRaw || snRaw;
+                if (source) {
+                    let clean = source.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                    userTag = clean.length >= 8 ? clean.slice(-8) : clean;
+                }
+            }
+            const username = `${userTag}${packageType}`;
             
             let password = data.phone;
             const preConfigStatus = isPreConfig(ticketText);
