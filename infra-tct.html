@@ -439,7 +439,28 @@
                 document.getElementById('disp_name').innerText = data.name !== "UNKNOWN" ? data.name : '--';
                 document.getElementById('disp_phone').innerText = data.phone !== "UNKNOWN" ? data.phone : '--';
                 document.getElementById('disp_order').innerText = data.orderNum !== "UNKNOWN" ? data.orderNum : '--';
+                
+                const detectedPkg = autoDetectPackage(customerInput.value);
+                const packageSelect = document.getElementById('packageType');
+                if (detectedPkg && packageSelect) {
+                    packageSelect.value = detectedPkg;
+                }
             });
+
+            function autoDetectPackage(text) {
+                if (!text) return null;
+                if (/gigaedge/i.test(text)) return '@gigaedge';
+                if (/megaedge/i.test(text)) return '@megaedge';
+                if (/bizedge/i.test(text)) return '@bizedge';
+                if (/fiber\s*link|fiberlink/i.test(text)) return '@fiberlink';
+                if (/today\s*home|todayhome/i.test(text)) return '@todayhome';
+                if (/today\s*fiber|todayfiber/i.test(text)) return '@todayfiber';
+                if (/today\s*plus|todayplus/i.test(text)) return '@todayplus';
+                if (/simply\s*fast|simplyfast|\bsf\b/i.test(text)) return '@sf';
+                if (/today\s*wifi|todaywifi/i.test(text)) return '@todaywifi';
+                if (/\bbbi\b/i.test(text)) return '@bbi';
+                return null;
+            }
             
             customerInput.addEventListener('keydown', (e) => {
                 if (e.ctrlKey && e.key === 'Enter') {

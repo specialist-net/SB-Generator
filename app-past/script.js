@@ -10,18 +10,26 @@ document.addEventListener('DOMContentLoaded', () => {
         // Auto-select package type
         const text = customerInput.value;
         const packageSelect = document.getElementById('packageType');
-        if (/today\s*wifi/i.test(text)) {
-            packageSelect.value = '@todaywifi';
-        } else if (/\bbbi\b/i.test(text)) {
-            packageSelect.value = '@bbi';
-        } else if (/gigaedge/i.test(text)) {
-            packageSelect.value = '@gigaedge';
-        } else if (/megaedge/i.test(text)) {
-            packageSelect.value = '@megaedge';
-        } else if (/bizedge/i.test(text)) {
-            packageSelect.value = '@bizedge';
+        const detectedPkg = autoDetectPackage(text);
+        if (detectedPkg && packageSelect) {
+            packageSelect.value = detectedPkg;
         }
     });
+
+function autoDetectPackage(text) {
+    if (!text) return null;
+    if (/gigaedge/i.test(text)) return '@gigaedge';
+    if (/megaedge/i.test(text)) return '@megaedge';
+    if (/bizedge/i.test(text)) return '@bizedge';
+    if (/fiber\s*link|fiberlink/i.test(text)) return '@fiberlink';
+    if (/today\s*home|todayhome/i.test(text)) return '@todayhome';
+    if (/today\s*fiber|todayfiber/i.test(text)) return '@todayfiber';
+    if (/today\s*plus|todayplus/i.test(text)) return '@todayplus';
+    if (/simply\s*fast|simplyfast|\bsf\b/i.test(text)) return '@sf';
+    if (/today\s*wifi|todaywifi/i.test(text)) return '@todaywifi';
+    if (/\bbbi\b/i.test(text)) return '@bbi';
+    return null;
+}
     
     // Generate on Ctrl+Enter
     customerInput.addEventListener('keydown', (e) => {
