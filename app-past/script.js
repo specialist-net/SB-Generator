@@ -57,15 +57,80 @@ function autoDetectPackage(text) {
         }
     });
 
-    // Generate Button explicit event listener
-    const generateBtn = document.getElementById('generateBtn');
-    if (generateBtn) {
-        generateBtn.addEventListener('click', generateConfig);
+    // MAC Input auto-detect PON and ONU
+    const macInput = document.getElementById('macInput');
+    if (macInput) {
+        macInput.addEventListener('input', () => {
+            const rawVal = macInput.value;
+            const parsed = parseMacAndOnuInput(rawVal);
+            const interfaceInput = document.getElementById('interfaceInput');
+
+            if ((parsed.ponInfo || parsed.onuId) && interfaceInput) {
+                let currentVal = interfaceInput.value.trim();
+                let prefix = 'EPON0/1:';
+                if (parsed.ponInfo) {
+                    prefix = parsed.ponInfo;
+                } else if (currentVal.includes(':')) {
+                    prefix = currentVal.substring(0, currentVal.indexOf(':') + 1);
+                }
+                
+                let targetOnu = parsed.onuId;
+                if (!targetOnu) {
+                    const onuMatch = currentVal.match(/:(\d+)$/);
+                    if (onuMatch) targetOnu = onuMatch[1];
+                }
+
+                if (targetOnu) {
+                    interfaceInput.value = `${prefix}${targetOnu}`;
+                } else if (parsed.ponInfo) {
+                    interfaceInput.value = `${prefix}`;
+                }
+            }
+        });
     }
 
     // Initialize display with empty
     updateParsedDisplay('');
 });
+
+function parseMacAndOnuInput(rawVal) {
+    if (!rawVal) return { cleanMac: '', ponInfo: null, onuId: null };
+
+    let ponInfo = null;
+    let onuId = null;
+
+    // Check for PON / EPON / GPON X/Y pattern
+    const ponMatch = rawVal.match(/\b(G?EPON|PON)\s*(\d+\/\d+)/i);
+    if (ponMatch) {
+        const type = ponMatch[1].toUpperCase() === 'GPON' ? 'GPON' : 'EPON';
+        const slotPort = ponMatch[2];
+        ponInfo = `${type}${slotPort}:`;
+    }
+
+    // Check for ONU X pattern or :X pattern
+    const onuMatch = rawVal.match(/\bONU\s*[:#]?\s*(\d+)/i) || rawVal.match(/:(\d+)\b/);
+    if (onuMatch) {
+        onuId = onuMatch[1];
+    }
+
+    // Extract clean MAC address by stripping PON and ONU tokens first
+    let textForMac = rawVal;
+    if (ponMatch) textForMac = textForMac.replace(ponMatch[0], '');
+    if (onuMatch) textForMac = textForMac.replace(onuMatch[0], '');
+
+    const macMatch = textForMac.match(/(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}/) || 
+                     textForMac.match(/[0-9A-Fa-f]{12}/) || 
+                     textForMac.match(/(?:[0-9A-Fa-f]{2}\s*){6}/);
+
+    let cleanMac = '';
+    if (macMatch) {
+        cleanMac = macMatch[0].trim();
+    } else {
+        cleanMac = textForMac.replace(/[^a-zA-Z0-9]/g, '');
+    }
+
+    return { cleanMac, ponInfo, onuId };
+}
 
 // Auto-Expand Textarea
 function autoResizeTextarea(textarea) {
@@ -218,7 +283,9 @@ function generateConfig(event) {
     const interfaceStr = document.getElementById('interfaceInput').value;
     
     // Format MAC
-    const macStripped = macRaw.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    const parsedMac = parseMacAndOnuInput(macRaw);
+    const macTargetStr = parsedMac.cleanMac || macRaw;
+    const macStripped = macTargetStr.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
     const macClean = macStripped.slice(-8);
     
     // VLAN from Package Mode (For Command)
