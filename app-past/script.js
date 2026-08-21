@@ -18,16 +18,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function autoDetectPackage(text) {
     if (!text) return null;
-    if (/gigaedge/i.test(text)) return '@gigaedge';
-    if (/megaedge/i.test(text)) return '@megaedge';
-    if (/bizedge/i.test(text)) return '@bizedge';
-    if (/fiber\s*link|fiberlink/i.test(text)) return '@fiberlink';
-    if (/today\s*home|todayhome/i.test(text)) return '@todayhome';
-    if (/today\s*fiber|todayfiber/i.test(text)) return '@todayfiber';
-    if (/today\s*plus|todayplus/i.test(text)) return '@todayplus';
-    if (/simply\s*fast|simplyfast|\bsf\b/i.test(text)) return '@sf';
-    if (/today\s*wifi|todaywifi/i.test(text)) return '@todaywifi';
-    if (/\bbbi\b/i.test(text)) return '@bbi';
+
+    // Extract explicit Package line if present
+    const pkgMatch = text.match(/Package\s*[:.]?\s*([^\n\r]+)/i);
+    const targetText = pkgMatch ? pkgMatch[1] : text;
+
+    // Helper to evaluate text
+    const matchTarget = (str) => {
+        if (/giga/i.test(str)) return '@gigaedge';
+        if (/mega/i.test(str)) return '@megaedge';
+        if (/biz/i.test(str)) return '@bizedge';
+        if (/fiber\s*link|fiberlink|link[- ]light/i.test(str)) return '@fiberlink';
+        if (/home/i.test(str)) return '@todayhome';
+        if (/wifi/i.test(str) && !/router|rental/i.test(str)) return '@todaywifi';
+        if (/\bbbi\b/i.test(str)) return '@bbi';
+        if (/simply/i.test(str) || /\bsf\b/i.test(str)) return '@sf';
+        if (/plus/i.test(str)) return '@todayplus';
+        if (/fiber/i.test(str)) return '@todayfiber';
+        return null;
+    };
+
+    // First check explicit Package line
+    const result = matchTarget(targetText);
+    if (result) return result;
+
+    // Fallback to full text if Package line didn't yield a match
+    if (pkgMatch) {
+        return matchTarget(text);
+    }
+
     return null;
 }
     
