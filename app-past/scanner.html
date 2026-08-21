@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ONU Barcode & Lens OCR Scanner - ISP Config Generator</title>
+    <title>ONU Barcode & Drag-Select Lens Scanner - ISP Config Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@zxing/library@latest/umd/index.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -86,29 +86,24 @@
             border-color: #58a6ff;
         }
 
-        .ocr-word-box {
-            position: absolute;
-            background: rgba(88, 166, 255, 0.28);
-            border: 1px solid rgba(88, 166, 255, 0.75);
-            border-radius: 2px;
-            color: transparent;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            user-select: text;
+        .ocr-selectable-line {
+            line-height: 1;
+            white-space: nowrap;
+            cursor: text;
+            user-select: text !important;
+            -webkit-user-select: text !important;
         }
 
-        .ocr-word-box:hover {
-            background: rgba(0, 255, 136, 0.45);
-            border-color: #00ff88;
-            box-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
-            color: #ffffff;
-            font-size: 11px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-shadow: 0 1px 2px #000;
-            z-index: 30;
+        .ocr-selectable-line::selection {
+            background: #0078d4 !important;
+            color: #ffffff !important;
+            text-shadow: none;
+        }
+
+        .ocr-selectable-line::-moz-selection {
+            background: #0078d4 !important;
+            color: #ffffff !important;
+            text-shadow: none;
         }
     </style>
 </head>
@@ -118,8 +113,8 @@
         <div class="flex items-center gap-3">
             <div class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></div>
             <div>
-                <h1 class="text-lg font-bold tracking-wider text-var-accent font-mono">📷 ONU BARCODE & LENS OCR SCANNER</h1>
-                <p class="text-xs text-var-muted">Google Lens-style Image Text Selector & Auto-Extract (PROD, MAC, SN)</p>
+                <h1 class="text-lg font-bold tracking-wider text-var-accent font-mono">📷 ONU BARCODE & DRAG-SELECT LENS SCANNER</h1>
+                <p class="text-xs text-var-muted">Drag mouse over photo text to select in BLUE & Copy/Assign instantly</p>
             </div>
         </div>
 
@@ -135,7 +130,7 @@
             </a>
             <div class="text-xs animate-pulse flex items-center gap-2 border-var-color border px-3 py-1 rounded" style="color:var(--border-color); background:var(--copy-bg)">
                 <div class="w-2 h-2 rounded-full bg-var-color"></div>
-                GOOGLE LENS OCR ACTIVE
+                DRAG MOUSE TEXT SELECTION ACTIVE
             </div>
         </div>
     </header>
@@ -147,10 +142,10 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h0.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     1. Upload or Paste Image (Ctrl + V)
                 </span>
-                <span class="text-[11px] text-blue-400 font-normal">💡 Click Blue Highlights on Photo to Copy/Assign</span>
+                <span class="text-[11px] text-blue-400 font-normal">🖱️ Drag mouse cursor across photo text to select in BLUE!</span>
             </h2>
 
-            <div id="dropZone" onclick="document.getElementById('fileInput').click()" class="drop-zone p-8 rounded-lg text-center cursor-pointer flex flex-col items-center justify-center min-h-[180px]">
+            <div id="dropZone" onclick="document.getElementById('fileInput').click()" class="drop-zone p-8 rounded-lg text-center cursor-pointer flex flex-col items-center justify-center min-h-[160px]">
                 <svg class="w-12 h-12 text-emerald-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                 <p class="text-sm font-bold uppercase tracking-wider text-emerald-400">Click to Select Image OR Press <span class="underline">Ctrl + V</span> to Paste</p>
                 <p class="text-xs text-var-muted mt-1">Supports PNG, JPG, WEBP photos of ONU Barcode Stickers</p>
@@ -159,25 +154,26 @@
 
             <div id="previewContainer" class="hidden flex-col gap-2">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold uppercase text-var-muted">Image Lens Preview</span>
+                    <span class="text-xs font-bold uppercase text-var-muted">Image Lens (Drag Mouse to Select Text)</span>
                     <button onclick="clearImage()" class="text-[11px] text-red-400 hover:underline font-bold uppercase">Clear Image</button>
                 </div>
-                <div id="overlayWrapper" class="relative noc-panel p-2 rounded border border-var-color bg-black/40 flex justify-center overflow-hidden min-h-[250px]">
-                    <img id="imagePreview" src="" alt="ONU Sticker Preview" class="max-h-[380px] w-auto object-contain rounded block" onload="repositionOverlays()">
-                    <div id="ocrOverlay" class="absolute inset-0 pointer-events-auto"></div>
+                
+                <div id="imageWrapper" class="relative inline-block noc-panel p-2 rounded border border-var-color bg-black/40 overflow-hidden self-center">
+                    <img id="imagePreview" src="" alt="ONU Sticker Preview" class="max-h-[380px] w-auto object-contain rounded block">
+                    <div id="selectableTextLayer" class="absolute inset-0 pointer-events-auto select-text overflow-hidden"></div>
                 </div>
             </div>
 
             <div id="scanStatus" class="hidden items-center gap-3 p-3 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase font-mono">
                 <svg class="w-5 h-5 animate-spin shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                <span id="scanStatusText">Scanning Barcodes & Reading Text Bounding Boxes...</span>
+                <span id="scanStatusText">Scanning Barcodes & Building Drag-Select Text Layer...</span>
             </div>
         </section>
 
         <section class="noc-panel p-5 rounded-lg flex flex-col gap-5 border border-var-color">
             <h2 class="text-sm font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                2. Scanned Details & Interactive Text
+                2. Auto-Extracted Details
             </h2>
 
             <div class="space-y-4 flex-grow">
@@ -192,7 +188,7 @@
                 <div>
                     <label class="text-xs font-bold text-var-muted uppercase block mb-1">MAC Address</label>
                     <div class="flex gap-2">
-                        <input type="text" id="outMac" class="noc-input w-full p-2.5 text-sm uppercase font-bold text-emerald-400" placeholder="e.g. 80F1A8B549B2">
+                        <input type="text" id="outMac" class="noc-input w-full p-2.5 text-sm uppercase font-bold text-emerald-400" placeholder="e.g. 6889C1AC659F">
                         <button onclick="copyFieldValue('outMac')" class="noc-btn px-4 text-xs font-bold uppercase shrink-0">COPY</button>
                     </div>
                 </div>
@@ -200,13 +196,13 @@
                 <div>
                     <label class="text-xs font-bold text-var-muted uppercase block mb-1">SN (Serial Number / PON No)</label>
                     <div class="flex gap-2">
-                        <input type="text" id="outSn" class="noc-input w-full p-2.5 text-sm uppercase font-bold text-emerald-400" placeholder="e.g. VSOL00B549B2">
+                        <input type="text" id="outSn" class="noc-input w-full p-2.5 text-sm uppercase font-bold text-emerald-400" placeholder="e.g. 48575443AC659F47">
                         <button onclick="copyFieldValue('outSn')" class="noc-btn px-4 text-xs font-bold uppercase shrink-0">COPY</button>
                     </div>
                 </div>
 
                 <div>
-                    <label class="text-xs font-bold text-var-muted uppercase block mb-1">Full Scanned Text (Editable & Selectable)</label>
+                    <label class="text-xs font-bold text-var-muted uppercase block mb-1">Full Scanned Text (Editable)</label>
                     <textarea id="outRawText" class="noc-input w-full p-2.5 text-xs font-mono h-28 uppercase" placeholder="All text extracted from image will appear here..."></textarea>
                 </div>
             </div>
@@ -220,16 +216,16 @@
         </section>
     </main>
 
-    <div id="wordPopup" class="fixed hidden bg-slate-900 border border-emerald-400 text-white rounded p-2 shadow-2xl z-50 text-xs font-mono flex-col gap-1.5" style="backdrop-filter: blur(10px);">
+    <div id="selectionPopup" class="fixed hidden bg-slate-900 border border-emerald-400 text-white rounded p-2.5 shadow-2xl z-50 text-xs font-mono flex-col gap-2" style="backdrop-filter: blur(12px);">
         <div class="font-bold text-emerald-400 text-[11px] pb-1 border-b border-gray-700 flex justify-between items-center gap-4">
-            <span id="popupWordText">WORD</span>
-            <button onclick="closePopup()" class="text-gray-400 hover:text-white">✕</button>
+            <span>SELECTED: "<span id="popupSelectedText" class="text-white"></span>"</span>
+            <button onclick="closeSelectionPopup()" class="text-gray-400 hover:text-white">✕</button>
         </div>
         <div class="flex flex-col gap-1">
-            <button onclick="assignWordTo('outMac')" class="text-left px-2 py-1 hover:bg-emerald-500/20 rounded text-emerald-300 font-bold uppercase">🏷️ Set as MAC Address</button>
-            <button onclick="assignWordTo('outSn')" class="text-left px-2 py-1 hover:bg-emerald-500/20 rounded text-emerald-300 font-bold uppercase">🏷️ Set as SN (Serial)</button>
-            <button onclick="assignWordTo('outProd')" class="text-left px-2 py-1 hover:bg-emerald-500/20 rounded text-emerald-300 font-bold uppercase">🏷️ Set as PROD ID</button>
-            <button onclick="copyWordDirect()" class="text-left px-2 py-1 hover:bg-blue-500/20 rounded text-blue-300 font-bold uppercase">📋 Copy Word Text</button>
+            <button onclick="assignSelectionTo('outMac')" class="text-left px-2.5 py-1.5 hover:bg-emerald-500/20 rounded text-emerald-300 font-bold uppercase">🏷️ Set as MAC Address</button>
+            <button onclick="assignSelectionTo('outSn')" class="text-left px-2.5 py-1.5 hover:bg-emerald-500/20 rounded text-emerald-300 font-bold uppercase">🏷️ Set as SN (Serial)</button>
+            <button onclick="assignSelectionTo('outProd')" class="text-left px-2.5 py-1.5 hover:bg-emerald-500/20 rounded text-emerald-300 font-bold uppercase">🏷️ Set as PROD ID</button>
+            <button onclick="copySelectionDirect()" class="text-left px-2.5 py-1.5 hover:bg-blue-500/20 rounded text-blue-300 font-bold uppercase">📋 Copy Selected Text</button>
         </div>
     </div>
 
@@ -243,11 +239,11 @@
         const fileInput = document.getElementById('fileInput');
         const previewContainer = document.getElementById('previewContainer');
         const imagePreview = document.getElementById('imagePreview');
-        const ocrOverlay = document.getElementById('ocrOverlay');
+        const selectableTextLayer = document.getElementById('selectableTextLayer');
         const scanStatus = document.getElementById('scanStatus');
         const scanStatusText = document.getElementById('scanStatusText');
-        const wordPopup = document.getElementById('wordPopup');
-        let selectedWordText = '';
+        const selectionPopup = document.getElementById('selectionPopup');
+        let currentMouseSelection = '';
 
         document.addEventListener('paste', (e) => {
             const items = (e.clipboardData || e.originalEvent.clipboardData).items;
@@ -292,14 +288,14 @@
             previewContainer.classList.add('hidden');
             previewContainer.classList.remove('flex');
             imagePreview.src = '';
-            ocrOverlay.innerHTML = '';
+            selectableTextLayer.innerHTML = '';
             document.getElementById('outProd').value = '';
             document.getElementById('outMac').value = '';
             document.getElementById('outSn').value = '';
             document.getElementById('outRawText').value = '';
             scanStatus.classList.add('hidden');
             scanStatus.classList.remove('flex');
-            closePopup();
+            closeSelectionPopup();
         }
 
         async function processImageFile(file) {
@@ -309,11 +305,11 @@
                 imagePreview.src = imgDataUrl;
                 previewContainer.classList.remove('hidden');
                 previewContainer.classList.add('flex');
-                ocrOverlay.innerHTML = '';
+                selectableTextLayer.innerHTML = '';
 
                 scanStatus.classList.remove('hidden');
                 scanStatus.classList.add('flex');
-                scanStatusText.innerText = "Scanning Barcodes & Reading Text Bounding Boxes...";
+                scanStatusText.innerText = "Scanning Barcodes & Building Drag-Select Text Layer...";
 
                 await scanImageBarcodesAndText(imgDataUrl);
             };
@@ -323,7 +319,7 @@
         async function scanImageBarcodesAndText(imgUrl) {
             let foundBarcodes = [];
             let extractedRawText = "";
-            let wordsData = [];
+            let linesData = [];
 
             if ('BarcodeDetector' in window) {
                 try {
@@ -353,12 +349,12 @@
                 }
             }
 
-            scanStatusText.innerText = "Generating Google Lens Blue Box Overlay...";
+            scanStatusText.innerText = "Extracting Text & Building Drag-Select Overlay...";
             if (window.Tesseract) {
                 try {
                     const res = await Tesseract.recognize(imgUrl, 'eng');
                     extractedRawText = res.data.text || "";
-                    wordsData = res.data.words || [];
+                    linesData = res.data.lines || [];
                 } catch (err) {
                     console.warn("Tesseract OCR error:", err);
                 }
@@ -367,67 +363,72 @@
             scanStatus.classList.add('hidden');
             scanStatus.classList.remove('flex');
 
-            renderOcrOverlays(wordsData);
-            parseExtractedData(foundBarcodes, extractedRawText, wordsData);
+            renderSelectableTextOverlay(linesData);
+            parseExtractedData(foundBarcodes, extractedRawText);
         }
 
-        function renderOcrOverlays(words) {
-            ocrOverlay.innerHTML = '';
+        function renderSelectableTextOverlay(lines) {
+            selectableTextLayer.innerHTML = '';
             const img = imagePreview;
-            if (!img || !words || words.length === 0) return;
+            if (!img || !lines || lines.length === 0) return;
 
             const naturalW = img.naturalWidth || 1;
             const naturalH = img.naturalHeight || 1;
 
-            words.forEach(w => {
-                if (!w.text || w.text.trim().length === 0) return;
-                const bbox = w.bbox;
+            lines.forEach(line => {
+                if (!line.text || line.text.trim().length === 0) return;
+                const bbox = line.bbox;
                 if (!bbox) return;
 
-                const box = document.createElement('div');
-                box.className = 'ocr-word-box';
-                box.style.left = (bbox.x0 / naturalW * 100) + '%';
-                box.style.top = (bbox.y0 / naturalH * 100) + '%';
-                box.style.width = ((bbox.x1 - bbox.x0) / naturalW * 100) + '%';
-                box.style.height = ((bbox.y1 - bbox.y0) / naturalH * 100) + '%';
-                box.innerText = w.text;
-                box.title = "Click to select: " + w.text;
+                const lineDiv = document.createElement('div');
+                lineDiv.className = 'ocr-selectable-line absolute';
+                lineDiv.style.left = (bbox.x0 / naturalW * 100) + '%';
+                lineDiv.style.top = (bbox.y0 / naturalH * 100) + '%';
+                lineDiv.style.width = ((bbox.x1 - bbox.x0) / naturalW * 100) + '%';
+                lineDiv.style.height = ((bbox.y1 - bbox.y0) / naturalH * 100) + '%';
+                lineDiv.style.fontSize = Math.max(10, Math.min(22, (bbox.y1 - bbox.y0) * (img.clientHeight / naturalH))) + 'px';
+                lineDiv.style.color = 'transparent';
+                lineDiv.innerText = line.text;
 
-                box.onclick = (e) => {
-                    e.stopPropagation();
-                    showWordPopup(e, w.text);
-                };
-
-                ocrOverlay.appendChild(box);
+                selectableTextLayer.appendChild(lineDiv);
             });
         }
 
-        function repositionOverlays() {}
+        document.addEventListener('mouseup', (e) => {
+            setTimeout(() => {
+                const sel = window.getSelection();
+                const selText = sel ? sel.toString().trim() : '';
+                if (selText && selText.length > 0) {
+                    currentMouseSelection = selText;
+                    showSelectionPopup(e.clientX, e.clientY, selText);
+                }
+            }, 50);
+        });
 
-        function showWordPopup(e, text) {
-            selectedWordText = text.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-            document.getElementById('popupWordText').innerText = text;
-            wordPopup.style.left = Math.min(e.clientX, window.innerWidth - 200) + 'px';
-            wordPopup.style.top = Math.min(e.clientY, window.innerHeight - 180) + 'px';
-            wordPopup.classList.remove('hidden');
-            wordPopup.classList.add('flex');
+        function showSelectionPopup(x, y, text) {
+            document.getElementById('popupSelectedText').innerText = text;
+            selectionPopup.style.left = Math.min(x + 10, window.innerWidth - 240) + 'px';
+            selectionPopup.style.top = Math.min(y + 10, window.innerHeight - 200) + 'px';
+            selectionPopup.classList.remove('hidden');
+            selectionPopup.classList.add('flex');
         }
 
-        function closePopup() {
-            wordPopup.classList.add('hidden');
-            wordPopup.classList.remove('flex');
+        function closeSelectionPopup() {
+            selectionPopup.classList.add('hidden');
+            selectionPopup.classList.remove('flex');
         }
 
-        function assignWordTo(fieldId) {
-            if (selectedWordText) {
-                document.getElementById(fieldId).value = selectedWordText;
+        function assignSelectionTo(fieldId) {
+            const cleanVal = currentMouseSelection.replace(/[^a-zA-Z0-9-]/g, '').toUpperCase();
+            if (cleanVal) {
+                document.getElementById(fieldId).value = cleanVal;
             }
-            closePopup();
+            closeSelectionPopup();
         }
 
-        function copyWordDirect() {
-            if (selectedWordText) {
-                navigator.clipboard.writeText(selectedWordText);
+        function copySelectionDirect() {
+            if (currentMouseSelection) {
+                navigator.clipboard.writeText(currentMouseSelection);
                 const toast = document.getElementById('toast');
                 toast.classList.remove('hidden');
                 toast.classList.add('toast-show');
@@ -436,57 +437,57 @@
                     toast.classList.remove('toast-show');
                 }, 2000);
             }
-            closePopup();
+            closeSelectionPopup();
         }
 
-        function parseExtractedData(barcodes, rawText, words) {
+        function parseExtractedData(barcodes, rawText) {
             let prod = "";
             let mac = "";
             let sn = "";
 
-            const wordTokens = words.map(w => w.text);
             const rawLines = rawText.split(/\r?\n/);
-            const allTokens = [...barcodes, ...wordTokens, ...rawLines];
+            const allTokens = [...barcodes, ...rawLines];
 
-            allTokens.forEach(token => {
-                const cleanToken = token.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-                if (!cleanToken) return;
+            barcodes.forEach(b => {
+                const cleanB = b.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                if (!prod && /^21\d{14,20}/.test(cleanB)) prod = cleanB;
+                if (!mac && /^[0-9A-F]{12}$/.test(cleanB)) mac = cleanB;
+                if (!sn && (cleanB.length === 16 || /^48575443|^VSOL|^HWTC|^ZTEG/.test(cleanB))) sn = cleanB;
+            });
 
-                if (!prod && (/^21\d{14,20}/.test(cleanToken) || (cleanToken.length >= 18 && cleanToken.length <= 22 && /^21/.test(cleanToken)))) {
-                    prod = cleanToken;
-                } else if (!prod && /PROD/i.test(token)) {
-                    const m = token.match(/(?:PROD\s*ID|PROD)?\s*[:.]?\s*([A-Z0-9]{14,22})/i);
+            rawLines.forEach(line => {
+                const upperLine = line.toUpperCase();
+
+                if (!prod && /PROD/i.test(line)) {
+                    const m = line.match(/(?:PROD\s*ID|PROD)?\s*[:.]?\s*([A-Z0-9]{15,25})/i);
                     if (m) prod = m[1].replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
                 }
 
-                if (!mac && /MAC/i.test(token)) {
-                    const m = token.match(/MAC\s*[:.]?\s*([A-F0-9]{12}|[A-F0-9-]{14,17})/i);
-                    if (m) mac = m[1].replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-                } else if (!mac && cleanToken.length === 12 && /^[0-9A-F]{12}$/i.test(cleanToken)) {
-                    mac = cleanToken;
+                if (!mac && /MAC/i.test(line)) {
+                    const m = line.match(/MAC\s*[:.]?\s*([A-F0-9]{12}|[A-F0-9-]{14,17})/i);
+                    if (m) {
+                        const candidate = m[1].replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                        if (candidate.length >= 12) mac = candidate.substring(0, 12);
+                    }
                 }
 
-                if (!sn && (/PON|SN|SERIAL|VSOL|HWTC|GPON|EPON|ZTEG|4857544|V260/i.test(token))) {
-                    const m = token.match(/(?:PON\s*S\/?N|PON\s*NO|S\/?N|SERIAL)?\s*[:.]?\s*([A-Z0-9]{10,18})/i);
+                if (!sn && /PON|SN|SERIAL|S\/N|30S/i.test(line)) {
+                    const m = line.match(/(?:PON\s*NO|PON\s*S\/?N|S\/?N|30S)?\s*[:.]?\s*([A-Z0-9]{10,18})/i);
                     if (m) {
                         const candidate = m[1].replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
                         if (candidate.length >= 10 && candidate !== mac) sn = candidate;
-                    } else if (cleanToken.length >= 10 && cleanToken.length <= 18 && cleanToken !== mac) {
-                        sn = cleanToken;
                     }
                 }
             });
 
-            if (!sn || !mac) {
-                rawLines.forEach((line, idx) => {
-                    const cleanLine = line.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-                    if (!mac && /MAC/i.test(line)) {
-                        const m = line.match(/([A-F0-9]{12})/i) || (rawLines[idx+1] && rawLines[idx+1].match(/([A-F0-9]{12})/i));
-                        if (m) mac = m[1].toUpperCase();
+            if (!mac || !sn) {
+                allTokens.forEach(t => {
+                    const cleanT = t.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                    if (!mac && cleanT.length === 12 && /^[0-9A-F]{12}$/.test(cleanT)) {
+                        mac = cleanT;
                     }
-                    if (!sn && /PON|SN|S\/N/i.test(line)) {
-                        const m = line.match(/([A-Z0-9]{10,16})/i) || (rawLines[idx+1] && rawLines[idx+1].match(/([A-Z0-9]{10,16})/i));
-                        if (m && m[1] !== mac) sn = m[1].toUpperCase();
+                    if (!sn && (cleanT.length === 16 || /^48575443|^VSOL|^HWTC|^ZTEG/.test(cleanT)) && cleanT !== mac) {
+                        sn = cleanT;
                     }
                 });
             }
