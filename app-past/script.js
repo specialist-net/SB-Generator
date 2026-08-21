@@ -87,9 +87,14 @@ function parseCustomerData(text) {
         result.id = idVal;
     }
 
-    // Project / Order Code (e.g. TD0350)
-    const projectMatch = text.match(/Project\s*[:.\uFF1A]?\s*([^\n\r]+)/i);
-    if (projectMatch) result.project = projectMatch[1].trim();
+    // Project / Order Code (e.g. order : 186352 or TD0350)
+    const orderMatch = text.match(/(?:order|order\s*id)\s*[:.\uFF1A]?\s*([^\n\r]+)/i);
+    if (orderMatch) result.project = orderMatch[1].trim();
+
+    if (!result.project) {
+        const projectMatch = text.match(/Project\s*[:.\uFF1A]?\s*([^\n\r]+)/i);
+        if (projectMatch) result.project = projectMatch[1].trim();
+    }
     if (!result.project) {
         const projectSpaceMatch = text.match(/Project\s+([A-Za-z0-9][A-Za-z0-9 ]{0,20})/i);
         if (projectSpaceMatch) result.project = projectSpaceMatch[1].trim();
@@ -119,6 +124,22 @@ function parseCustomerData(text) {
         const inlineNameMatch = text.match(/ID\s*[:.]?\s*\S+\s+Name\s*[:.]?\s*([^\n\r]+)/im);
         if (inlineNameMatch) {
             result.fullName = inlineNameMatch[1].trim();
+        }
+    }
+
+    // Fallback: check next line after ID if Name label is absent
+    if (result.fullName === 'N/A' && idMatch) {
+        const lines = text.split(/\r?\n/);
+        for (let i = 0; i < lines.length; i++) {
+            if (lines[i].includes(idMatch[0]) || (idVal && lines[i].includes(idVal))) {
+                if (i + 1 < lines.length) {
+                    const nextLine = lines[i + 1].trim();
+                    if (nextLine && !/^(?:contact|address|note|order|phone|cid|id|password)\s*[:.]/i.test(nextLine)) {
+                        result.fullName = nextLine;
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -222,42 +243,33 @@ function generateConfig(event) {
     // ==========================================
     // 1. GENERATE USER INFO
     // ==========================================
-    const isNewPackage = packageType === '@todaywifi' || packageType === '@bbi';
-    const footerInfo = data.project && data.project !== 'N/A' ? data.project : '';
     const preConfigStatus = isPreConfig(rawText);
+    const headerLine = preConfigStatus ? `Done Pre-config Bong\n\n` : `Done active please help confirm service\n\n`;
+    const footerLine = preConfigStatus ? `Thank you, Bong.` : `Thank you.`;
+    const orderLine = data.project && data.project !== 'N/A' ? `Order : ${data.project}\n` : '';
 
-    let outUser = '';
-    if (isNewPackage) {
-        outUser = `Done Bong. Please help test!\n\n`;
-        outUser += `ID: ${data.id}\n`;
-        outUser += `Name: ${data.fullName}\n`;
-        outUser += `Username: ${username}\n`;
-        outUser += `Password: ${data.phone}\n\n`;
-        outUser += `Thank you, Bong.`;
+    let outUser = headerLine;
+    outUser += `ID: ${data.id}\n`;
+    outUser += `Name: ${data.fullName}\n`;
+    
+    if (ipcamEnabled) {
+        const ipAddress = document.getElementById('ipInput').value.trim();
+        const portNum = document.getElementById('portInput').value.trim();
+        const ipParts = ipAddress.split('.');
+        const gateway = (ipParts.length === 4) ? `${ipParts[0]}.${ipParts[1]}.${ipParts[2]}.1` : 'N/A';
+        outUser += `IP :${ipAddress}\n`;
+        outUser += `Sub : 255.255.252.0\n`;
+        outUser += `GW : ${gateway}\n`;
+        outUser += `Port : ${portNum}\n\n`;
+        outUser += `IP view: 103.216.48.130\n`;
     } else {
-        outUser = preConfigStatus ? `Done Pre-config Bong. Please help test!\n\n` : `Done Bong. Please help test!\n\n`;
-        outUser += `ID: ${data.id}\n`;
-        outUser += `Name: ${data.fullName}\n`;
-        
-        if(ipcamEnabled) {
-            const ipAddress = document.getElementById('ipInput').value.trim();
-            const portNum = document.getElementById('portInput').value.trim();
-            const ipParts = ipAddress.split('.');
-            const gateway = (ipParts.length === 4) ? `${ipParts[0]}.${ipParts[1]}.${ipParts[2]}.1` : 'N/A';
-            outUser += `IP :${ipAddress}\n`;
-            outUser += `Sub : 255.255.252.0\n`;
-            outUser += `GW : ${gateway}\n`;
-            outUser += `Port : ${portNum}\n\n`;
-            outUser += `IP view: 103.216.48.130`;
-        } else {
-            outUser += `Username: ${username}\n`;
-            outUser += `Password: ${data.phone}${dnsLine}\n`;
-            if(data.aid) outUser += `${data.aid}\n`;
-        }
-        
-        if(footerInfo) outUser += `\n${footerInfo}-TCT\n`;
-        outUser += `\nThank you, Bong.`;
+        outUser += `Username: ${username}\n`;
+        outUser += `Password: ${data.phone}${dnsLine}\n`;
+        if (data.aid) outUser += `${data.aid}\n`;
     }
+    
+    if (orderLine) outUser += `${orderLine}`;
+    outUser += `\n${footerLine}`;
 
     // ==========================================
     // 2. GENERATE COMMAND OUTPUT

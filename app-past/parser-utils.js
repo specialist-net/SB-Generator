@@ -11,6 +11,6 @@
  */
 function isPreConfig(text) {
     if (!text) return false;
-    const preConfigRegex = /pre[- ]?config/i;
+    const preConfigRegex = /pre[- ]?config(?:ure)?/i;
     return preConfigRegex.test(text);
 }

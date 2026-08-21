@@ -493,14 +493,32 @@
             // ID
             const idMatch = text.match(/^\s*(?:CID\s*\/|C)?ID\s*[:.]?\s*([^\n\r]+)/im);
             // Name
+            let nameVal = "UNKNOWN";
             const nameMatch = text.match(/^\s*Name\b\s*[:.]?\s*([^\n\r]+)/im);
+            if (nameMatch) {
+                nameVal = nameMatch[1].trim();
+            } else if (idMatch) {
+                const lines = text.split(/\r?\n/);
+                for (let i = 0; i < lines.length; i++) {
+                    if (lines[i].includes(idMatch[0])) {
+                        if (i + 1 < lines.length) {
+                            const nextLine = lines[i + 1].trim();
+                            if (nextLine && !/^(?:contact|address|note|order|phone|cid|id|password)\s*[:.]/i.test(nextLine)) {
+                                nameVal = nextLine;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
             // Order
-            const orderMatch = text.match(/(TD\d{4})/i);
+            const orderMatch = text.match(/(?:order|order\s*id)\s*[:.\uFF1A]?\s*([^\n\r]+)/i) || text.match(/(TD\d{4})/i);
             const fullOrderMatch = text.match(/(TD\d{4}-TCT)/i);
 
             return {
                 id: idMatch ? idMatch[1].trim() : "UNKNOWN",
-                name: nameMatch ? nameMatch[1].trim() : "UNKNOWN",
+                name: nameVal,
                 phone: normalizePhoneNumber(text),
                 orderFull: fullOrderMatch ? fullOrderMatch[1].trim() : null,
                 orderNum: orderMatch ? orderMatch[1].trim() : "UNKNOWN"
@@ -530,15 +548,17 @@
             let password = data.phone;
             // password already normalized to 0... format in extractData -> normalizePhoneNumber
 
-            const bottomTag = data.orderFull ? data.orderFull : (data.orderNum !== "UNKNOWN" ? `${data.orderNum}-TCT` : "");
             const preConfigStatus = isPreConfig(ticketText);
 
-            const heading = preConfigStatus ? "Done Pre-config Bong. Please help test!" : "Done Bong. Please help test!";
-            
+            const heading = preConfigStatus ? "Done Pre-config Bong" : "Done active please help confirm service";
+            const footerText = preConfigStatus ? "Thank you, Bong." : "Thank you.";
+
+            const orderLine = data.orderNum !== "UNKNOWN" ? `Order : ${data.orderNum}\n` : (data.orderFull ? `${data.orderFull}\n` : "");
+
             const prod = document.getElementById('prodInput').value.trim();
             const mac = document.getElementById('macInput').value.trim();
 
-            const output1 = `${heading}\n\nID: ${data.id}\nName: ${data.name}\nUsername: ${username}\nPassword: ${password}\n\n${bottomTag}\n\nThank you, Bong.`;
+            const output1 = `${heading}\n\nID: ${data.id}\nName: ${data.name}\nUsername: ${username}\nPassword: ${password}\n${orderLine}\n${footerText}`;
             const output2 = `Dear bong, please active this customer new install\n\nOrder : ${data.orderNum}\nVLAN : ${connectionType}\nMode : Bridge\n\nPROD ID:${prod}\nMAC:${mac}\nSN:${sn}\n\nThanks`;
 
             document.getElementById('userInfoOutput').value = output1;

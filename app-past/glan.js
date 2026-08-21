@@ -82,7 +82,11 @@ function generateGlanConfig(event) {
     configOut += `end`;
 
     // 2. GROUP MESSAGE OUTPUT
-    let groupOut = `Done bong please test :\n\n`;
+    const preConfigStatus = (typeof isPreConfig === "function") ? isPreConfig(infoRaw) : /pre[- ]?config(?:ure)?/i.test(infoRaw);
+    const headerLine = preConfigStatus ? `Done Pre-config Bong\n\n` : `Done active please help confirm service\n\n`;
+    const footerLine = preConfigStatus ? `Thank you, Bong.` : `Thank you.`;
+
+    let groupOut = headerLine;
     groupOut += `ID: ${id}\n`;
     groupOut += `Name: ${name}\n\n`;
     groupOut += `IP: ${ip}\n`;
@@ -91,7 +95,7 @@ function generateGlanConfig(event) {
     groupOut += `Dns1: 103.216.51.193\n`;
     groupOut += `Dns2: 103.216.48.1\n`;
     if (aid) groupOut += `\n${aid}\n`;
-    groupOut += `\nThank you.`;
+    groupOut += `\n${footerLine}`;
 
     // Apply to UI
     const configEl = document.getElementById('glanConfigOutput');
