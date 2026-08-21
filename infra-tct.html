@@ -716,17 +716,21 @@
             
             let userTag = '12345678';
             if (currentInfraMode === 'TCT') {
-                // In TCT Mode, username is derived from SN (Serial Number)
-                const source = snRaw || macRaw;
-                if (source) {
-                    let clean = source.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                // In TCT INFRA mode: STRICTLY use SN (Serial Number) for username
+                if (snRaw) {
+                    let clean = snRaw.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                    userTag = clean.length >= 8 ? clean.slice(-8) : clean;
+                } else if (macRaw) {
+                    let clean = macRaw.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
                     userTag = clean.length >= 8 ? clean.slice(-8) : clean;
                 }
             } else {
-                // In MM Mode, username is derived from MAC Address
-                const source = macRaw || snRaw;
-                if (source) {
-                    let clean = source.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                // In MM INFRA mode: STRICTLY use MAC Address for username
+                if (macRaw) {
+                    let clean = macRaw.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                    userTag = clean.length >= 8 ? clean.slice(-8) : clean;
+                } else if (snRaw) {
+                    let clean = snRaw.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
                     userTag = clean.length >= 8 ? clean.slice(-8) : clean;
                 }
             }
