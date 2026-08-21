@@ -270,6 +270,7 @@ function generateConfig(event) {
     // ==========================================
     // 1. GENERATE USER INFO
     // ==========================================
+    const isNewPackage = packageType === '@todaywifi' || packageType === '@bbi';
     const preConfigStatus = isPreConfig(rawText);
     const headerLine = preConfigStatus ? `Done Pre-config Bong\n\n` : `Done active please help confirm service\n\n`;
     const footerLine = preConfigStatus ? `Thank you, Bong.` : `Thank you.`;
