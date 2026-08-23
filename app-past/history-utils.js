@@ -87,42 +87,69 @@ function recallTicketItem(index) {
     const item = history[index];
     if (!item) return;
 
-    // Fill inputs if elements exist on current page
-    const ticketElem = document.getElementById('customerTicket');
-    const macElem = document.getElementById('macInput');
-    const snElem = document.getElementById('snInput');
-    const prodElem = document.getElementById('prodInput');
-    const onuElem = document.getElementById('onuId');
-    const connTypeElem = document.getElementById('connectionType');
-    const pkgElem = document.getElementById('packageType');
-    const prefixElem = document.getElementById('interfacePrefix');
-
-    if (ticketElem && item.ticketText) ticketElem.value = item.ticketText;
-    if (macElem && item.mac !== undefined) macElem.value = item.mac;
-    if (snElem && item.sn !== undefined) snElem.value = item.sn;
-    if (prodElem && item.prod !== undefined) prodElem.value = item.prod;
-    if (onuElem && item.onuId !== undefined) onuElem.value = item.onuId;
-    if (connTypeElem && item.connectionType) connTypeElem.value = item.connectionType;
-    if (pkgElem && item.packageType) pkgElem.value = item.packageType;
-    if (prefixElem && item.interfacePrefix) prefixElem.value = item.interfacePrefix;
-
-    // If Infra mode exists
-    if (typeof setInfraMode === 'function' && item.mode) {
+    // 1. Switch infra mode if applicable (TCT vs MM) before populating dropdowns
+    if (typeof setInfraMode === 'function' && (item.mode === 'TCT' || item.mode === 'MM')) {
         setInfraMode(item.mode);
     }
 
-    // Trigger input events for auto-resizing and parsing
-    if (ticketElem) {
-        ticketElem.dispatchEvent(new Event('input'));
+    // 2. Identify all input elements across all pages (infra-tct.html, index.html, glan.html)
+    const ticketElem = document.getElementById('customerTicket') || document.getElementById('customerInput') || document.getElementById('glanInfo');
+    const macElem = document.getElementById('macInput');
+    const snElem = document.getElementById('snInput');
+    const prodElem = document.getElementById('prodInput');
+    const onuElem = document.getElementById('onuId') || document.getElementById('interfaceInput');
+    const connTypeElem = document.getElementById('connectionType') || document.getElementById('glanValue');
+    const pkgElem = document.getElementById('packageType');
+    const prefixElem = document.getElementById('interfacePrefix');
+    const ipElem = document.getElementById('glanIp') || document.getElementById('ipInput');
+
+    // 3. Fill values
+    if (ticketElem && item.ticketText) {
+        ticketElem.value = item.ticketText;
+        // Trigger input event to run auto-parse logic
+        ticketElem.dispatchEvent(new Event('input', { bubbles: true }));
+        if (typeof autoResize === 'function') autoResize(ticketElem);
+        if (typeof autoExpand === 'function') autoExpand(ticketElem);
     }
 
-    // Trigger generation if executeGeneration or generateConfig function exists
+    if (macElem && item.mac !== undefined) {
+        macElem.value = item.mac;
+        macElem.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    if (snElem && item.sn !== undefined) {
+        snElem.value = item.sn;
+        snElem.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    if (prodElem && item.prod !== undefined) {
+        prodElem.value = item.prod;
+        prodElem.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    if (onuElem && item.onuId !== undefined) {
+        onuElem.value = item.onuId;
+    }
+    if (connTypeElem && item.connectionType) {
+        connTypeElem.value = item.connectionType;
+    }
+    if (pkgElem && item.packageType) {
+        pkgElem.value = item.packageType;
+    }
+    if (prefixElem && item.interfacePrefix) {
+        prefixElem.value = item.interfacePrefix;
+    }
+    if (ipElem && item.ip) {
+        ipElem.value = item.ip;
+    }
+
+    // 4. Trigger generation
     if (typeof executeGeneration === 'function') {
         executeGeneration();
     } else if (typeof generateConfig === 'function') {
         generateConfig();
+    } else if (typeof generateGlanConfig === 'function') {
+        generateGlanConfig();
     }
 
+    // 5. Close modal
     closeHistoryModal();
 }
 
