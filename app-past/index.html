@@ -214,47 +214,75 @@
 <body class="min-h-screen p-4 flex flex-col">
 
     <!-- Header -->
-    <header class="flex justify-between items-center mb-6 px-2">
-        <div>
-            <h1 class="text-2xl font-bold uppercase tracking-widest leading-tight text-var-main">
-                ISP Config Generator
-            </h1>
-            <p class="text-var-secondary text-xs tracking-wide">
-                SYSTEM INITIALIZED :: NOC OPERATIONS DASHBOARD
-            </p>
+    <header class="noc-panel p-3.5 md:p-4 rounded-lg mb-6 border border-var-color flex flex-col xl:flex-row justify-between items-center gap-4 shadow-lg">
+        <!-- Left: Branding -->
+        <div class="flex items-center gap-3 w-full xl:w-auto justify-between xl:justify-start">
+            <div class="flex items-center gap-3">
+                <div class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold uppercase tracking-widest leading-tight text-var-main font-mono">
+                        ISP Config Generator
+                    </h1>
+                    <p class="text-var-secondary text-[11px] tracking-wider font-mono">
+                        SYSTEM INITIALIZED :: NOC OPERATIONS DASHBOARD
+                    </p>
+                </div>
+            </div>
+            <!-- Status dot on small screen -->
+            <div class="xl:hidden text-[10px] animate-pulse flex items-center gap-1 border-var-color border px-2 py-0.5 rounded font-mono font-bold" style="color:var(--border-color); background:var(--copy-bg)">
+                <div class="w-1.5 h-1.5 rounded-full bg-var-color"></div>
+                ONLINE
+            </div>
         </div>
-        <div class="flex items-center gap-4">
-            <!-- Theme Toggle -->
-            <button id="themeToggleBtn" onclick="toggleTheme()" class="text-xs noc-btn px-3 py-1 rounded transition-colors uppercase font-bold tracking-widest">
-                🌙 Dark | ☀ Light
-            </button>
-            <div class="h-4 border-l border-var-color mx-1"></div>
 
-            <a href="index.html" class="text-xs noc-btn filled px-3 py-1 rounded transition-colors uppercase font-bold">
-                APP-MAIN
-            </a>
-            <a href="../infra-tct.html" class="text-xs noc-btn px-3 py-1 rounded transition-colors uppercase font-bold">
-                INFRA-TCT
-            </a>
-            <a href="glan.html" class="text-xs noc-btn px-3 py-1 rounded transition-colors uppercase font-bold">
-                GLAN
-            </a>
-            <button onclick="openTopologyModal()" class="text-xs noc-btn px-3 py-1 rounded transition-colors uppercase font-bold flex items-center gap-1">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                TOPOLOGY
-            </button>
-            <button onclick="openHistoryModal()" class="text-xs noc-btn px-3 py-1 rounded transition-colors uppercase font-bold flex items-center gap-1">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                HISTORY (<span class="history-count-badge">0</span>)
-            </button>
-            <a href="scanner.html" target="_blank" class="text-xs noc-btn px-3 py-1 rounded transition-colors uppercase font-bold flex items-center gap-1">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h0.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
-                SCANNER
-            </a>
-            
-            <a href="admin.html" class="text-xs noc-btn px-3 py-1 rounded transition-colors uppercase font-bold">
-                ADMIN
-            </a>
+        <!-- Right: Grouped Controls -->
+        <div class="flex flex-wrap items-center justify-center xl:justify-end gap-3 w-full xl:w-auto">
+            <!-- 1. Navigation Pages -->
+            <nav class="flex items-center p-1 rounded border border-var-color bg-black/30 gap-1 shrink-0">
+                <a href="index.html" class="text-xs font-bold px-3 py-1.5 rounded transition-colors uppercase whitespace-nowrap font-mono noc-btn filled">
+                    APP-MAIN
+                </a>
+                <a href="../infra-tct.html" class="text-xs font-bold px-3 py-1.5 rounded transition-colors uppercase whitespace-nowrap font-mono hover:text-var-accent text-var-muted">
+                    INFRA-TCT
+                </a>
+                <a href="glan.html" class="text-xs font-bold px-3 py-1.5 rounded transition-colors uppercase whitespace-nowrap font-mono hover:text-var-accent text-var-muted">
+                    GLAN
+                </a>
+            </nav>
+
+            <div class="hidden sm:block h-5 border-l border-var-color opacity-30"></div>
+
+            <!-- 2. Quick Tools Group -->
+            <div class="flex items-center gap-1.5 shrink-0">
+                <button onclick="openTopologyModal()" class="text-xs noc-btn px-2.5 py-1.5 rounded transition-colors uppercase font-bold flex items-center gap-1.5 whitespace-nowrap">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    TOPOLOGY
+                </button>
+                <button onclick="openHistoryModal()" class="text-xs noc-btn px-2.5 py-1.5 rounded transition-colors uppercase font-bold flex items-center gap-1.5 whitespace-nowrap">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    HISTORY (<span class="history-count-badge">0</span>)
+                </button>
+                <a href="scanner.html" target="_blank" class="text-xs noc-btn px-2.5 py-1.5 rounded transition-colors uppercase font-bold flex items-center gap-1.5 whitespace-nowrap">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h0.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    SCANNER
+                </a>
+            </div>
+
+            <div class="hidden sm:block h-5 border-l border-var-color opacity-30"></div>
+
+            <!-- 3. System Actions -->
+            <div class="flex items-center gap-1.5 shrink-0">
+                <button id="themeToggleBtn" onclick="toggleTheme()" class="text-xs noc-btn px-2.5 py-1.5 rounded transition-colors uppercase font-bold flex items-center gap-1 whitespace-nowrap" title="Toggle Dark/Light Mode">
+                    🌓 THEME
+                </button>
+                <a href="admin.html" class="text-xs noc-btn px-2.5 py-1.5 rounded transition-colors uppercase font-bold whitespace-nowrap">
+                    ADMIN
+                </a>
+                <div class="hidden xl:flex text-xs animate-pulse items-center gap-1.5 border-var-color border px-2.5 py-1.5 rounded font-mono font-bold whitespace-nowrap" style="color:var(--border-color); background:var(--copy-bg)">
+                    <div class="w-2 h-2 rounded-full bg-var-color"></div>
+                    ONLINE
+                </div>
+            </div>
         </div>
     </header>
 
