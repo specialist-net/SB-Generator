@@ -735,16 +735,24 @@
 
         function extractData(text) {
             // ID
-            const idMatch = text.match(/^\s*(?:CID\s*\/|C)?ID\s*[:.]?\s*([^\n\r]+)/im);
+            const idMatch = text.match(/^\s*(?:Customer\s*ID|CID\s*\/|CID|C-ID|ID)\s*[:.]?\s*([^\n\r]+)/im);
             // Name
             let nameVal = "UNKNOWN";
+            let idVal = '';
+            if (idMatch) {
+                idVal = idMatch[1].trim();
+                const doubleIdMatch = idVal.match(/^(?:Customer\s*ID|CID|ID)\s*[:.]?\s*(.+)/i);
+                if (doubleIdMatch) idVal = doubleIdMatch[1].trim();
+                const nameIdx = idVal.search(/\s+Name\s*[:.]?\s/i);
+                if (nameIdx !== -1) idVal = idVal.substring(0, nameIdx).trim();
+            }
             const nameMatch = text.match(/^\s*Name\b\s*[:.]?\s*([^\n\r]+)/im);
             if (nameMatch) {
                 nameVal = nameMatch[1].trim();
             } else if (idMatch) {
                 const lines = text.split(/\r?\n/);
                 for (let i = 0; i < lines.length; i++) {
-                    if (lines[i].includes(idMatch[0])) {
+                    if (lines[i].includes(idMatch[0]) || (idVal && lines[i].includes(idVal))) {
                         if (i + 1 < lines.length) {
                             const nextLine = lines[i + 1].trim();
                             if (nextLine && !/^(?:contact|address|note|order|phone|cid|id|password|mm)\s*[:.]/i.test(nextLine)) {
@@ -757,18 +765,44 @@
             }
 
             // Order
-            const orderMatch = text.match(/(?:order|order\s*id)\s*[:.\uFF1A]?\s*([^\n\r]+)/i) || text.match(/(TD\d{4})/i);
+            const orderMatch = text.match(/(?:order|order\s*id|order\s*no\.?)\s*[:.\uFF1A]?\s*([^\n\r]+)/i) || text.match(/(TD\d{4})/i);
             const fullOrderMatch = text.match(/(TD\d{4}-TCT)/i);
+            let orderNumVal = orderMatch ? orderMatch[1].trim() : "UNKNOWN";
+
+            // Fallback: check line immediately above ID / CID
+            if (orderNumVal === "UNKNOWN") {
+                const lines = text.split(/\r?\n/);
+                let idLineIndex = -1;
+                for (let i = 0; i < lines.length; i++) {
+                    if (/^\s*(?:Customer\s*ID|CID\s*\/|CID|C-ID|ID)(?:[:.]|\s+\d)/i.test(lines[i])) {
+                        idLineIndex = i;
+                        break;
+                    }
+                }
+                if (idLineIndex > 0) {
+                    for (let j = idLineIndex - 1; j >= 0; j--) {
+                        const trimmed = lines[j].trim();
+                        if (trimmed.length > 0) {
+                            const cleanCandidate = trimmed.replace(/^(?:order|order\s*id|order\s*no\.?|no\.?|#)\s*[:.]?\s*/i, '').trim();
+                            if (/^\d{3,15}$/.test(cleanCandidate) || 
+                                (/^[A-Za-z0-9_-]{3,15}$/.test(cleanCandidate) && !/^(?:team|dear|hello|bong|hi|customer|active|installation|new|please|urgent|router)$/i.test(cleanCandidate))) {
+                                orderNumVal = cleanCandidate;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
 
             // MM ID - line must start with MM or MM ID followed by colon/dot e.g. "MM: 34629"
             const mmMatch = text.match(/^\s*(?:MM|MM\s*ID)\s*[:.\uFF1A]\s*([^\n\r]+)/im);
 
             return {
-                id: idMatch ? idMatch[1].trim() : "UNKNOWN",
+                id: idMatch ? idVal : "UNKNOWN",
                 name: nameVal,
                 phone: normalizePhoneNumber(text),
                 orderFull: fullOrderMatch ? fullOrderMatch[1].trim() : null,
-                orderNum: orderMatch ? orderMatch[1].trim() : "UNKNOWN",
+                orderNum: orderNumVal,
                 mmId: mmMatch ? mmMatch[1].trim() : "UNKNOWN"
             };
         }

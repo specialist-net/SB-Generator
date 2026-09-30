@@ -14,6 +14,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (detectedPkg && packageSelect) {
             packageSelect.value = detectedPkg;
         }
+
+        // Auto-detect MAC from ticket text if MAC input is empty
+        const macInput = document.getElementById('macInput');
+        if (text && macInput && !macInput.value.trim()) {
+            const ticketMacMatch = text.match(/(?:PPPoE|MAC)\s*[:.]?\s*([0-9A-Fa-f: -]{8,25})/i);
+            if (ticketMacMatch && ticketMacMatch[1].trim()) {
+                macInput.value = ticketMacMatch[1].trim();
+                macInput.dispatchEvent(new Event('input'));
+            }
+        }
     });
 
 function autoDetectPackage(text) {
@@ -168,10 +178,11 @@ function parseCustomerData(text) {
     if (!text) return result;
 
     // ID (stop at 'Name' keyword if on the same line)
-    const idMatch = text.match(/^\s*(?:CID\s*\/|C)?ID\s*[:.]?\s*([^\n\r]+)/im);
+    const idMatch = text.match(/^\s*(?:Customer\s*ID|CID\s*\/|CID|C-ID|ID)\s*[:.]?\s*([^\n\r]+)/im);
+    let idVal = '';
     if (idMatch) {
-        let idVal = idMatch[1].trim();
-        const doubleIdMatch = idVal.match(/^ID\s*[:.]?\s*(.+)/i);
+        idVal = idMatch[1].trim();
+        const doubleIdMatch = idVal.match(/^(?:Customer\s*ID|CID|ID)\s*[:.]?\s*(.+)/i);
         if (doubleIdMatch) idVal = doubleIdMatch[1].trim();
         // Trim at 'Name' keyword if ID and Name share the same line
         const nameIdx = idVal.search(/\s+Name\s*[:.]?\s/i);
@@ -180,7 +191,7 @@ function parseCustomerData(text) {
     }
 
     // Project / Order Code (e.g. order : 186352 or TD0350)
-    const orderMatch = text.match(/(?:order|order\s*id)\s*[:.\uFF1A]?\s*([^\n\r]+)/i);
+    const orderMatch = text.match(/(?:order|order\s*id|order\s*no\.?)\s*[:.\uFF1A]?\s*([^\n\r]+)/i);
     if (orderMatch) result.project = orderMatch[1].trim();
 
     if (!result.project) {
@@ -194,6 +205,31 @@ function parseCustomerData(text) {
     if (!result.project) {
         const telcotechMatch = text.match(/(Telcotech\s*-\s*[A-Z0-9]+)/i);
         if (telcotechMatch) result.project = telcotechMatch[1].replace(/\s+/g, '');
+    }
+
+    // Catch number on top of ID / CID as Order
+    if (!result.project) {
+        const lines = text.split(/\r?\n/);
+        let idLineIndex = -1;
+        for (let i = 0; i < lines.length; i++) {
+            if (/^\s*(?:Customer\s*ID|CID\s*\/|CID|C-ID|ID)(?:[:.]|\s+\d)/i.test(lines[i])) {
+                idLineIndex = i;
+                break;
+            }
+        }
+        if (idLineIndex > 0) {
+            for (let j = idLineIndex - 1; j >= 0; j--) {
+                const trimmed = lines[j].trim();
+                if (trimmed.length > 0) {
+                    const cleanCandidate = trimmed.replace(/^(?:order|order\s*id|order\s*no\.?|no\.?|#)\s*[:.]?\s*/i, '').trim();
+                    if (/^\d{3,15}$/.test(cleanCandidate) || 
+                        (/^[A-Za-z0-9_-]{3,15}$/.test(cleanCandidate) && !/^(?:team|dear|hello|bong|hi|customer|active|installation|new|please|urgent|router)$/i.test(cleanCandidate))) {
+                        result.project = cleanCandidate;
+                    }
+                    break;
+                }
+            }
+        }
     }
 
     // Name Extraction
@@ -282,9 +318,16 @@ function generateConfig(event) {
     const packageType = document.getElementById('packageType').value;
     const interfaceStr = document.getElementById('interfaceInput').value;
     
-    // Format MAC
-    const parsedMac = parseMacAndOnuInput(macRaw);
-    const macTargetStr = parsedMac.cleanMac || macRaw;
+    // Format MAC (with fallback to ticket text if macInput is empty)
+    let macTargetRaw = macRaw;
+    if (!macTargetRaw || !macTargetRaw.trim()) {
+        const ticketMacMatch = rawText.match(/(?:PPPoE|MAC)\s*[:.]?\s*([0-9A-Fa-f: -]{8,25})/i);
+        if (ticketMacMatch && ticketMacMatch[1].trim()) {
+            macTargetRaw = ticketMacMatch[1].trim();
+        }
+    }
+    const parsedMac = parseMacAndOnuInput(macTargetRaw);
+    const macTargetStr = parsedMac.cleanMac || macTargetRaw;
     const macStripped = macTargetStr.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
     const macClean = macStripped.slice(-8);
     
@@ -398,7 +441,7 @@ function generateConfig(event) {
             outCmd += `onu ${onuId} ctc eth 1 vlan pvid ${commandVlan} pri 0\n`;
             outCmd += `onu ${onuId} ctc eth 1 vlan mode tag`;
         } else {
-            let descLabel = `${data.project && data.project !== 'N/A' ? data.project : data.id}-${data.name}`;
+            let descLabel = `${(data.id && data.id !== 'N/A') ? data.id : (data.project && data.project !== 'N/A' ? data.project : '??')}-${data.name}`;
             
             outCmd = `onu ${onuId} description ${descLabel}\n`;
             outCmd += `onu ${onuId} ctc eth 1 vlan pvid ${commandVlan} pri 0\n`;
